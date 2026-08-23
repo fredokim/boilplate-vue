@@ -59,9 +59,11 @@ export default defineConfig({
         manualChunks: {
           vue: ["vue", "vue-router", "pinia"],
           api: ["axios", "class-transformer", "class-validator", "reflect-metadata"],
-          // The graph canvas and its layout engine are only used by the topology
-          // module, so they stay out of that module's own route chunk.
-          graph: ["@vue-flow/core", "@vue-flow/background", "@vue-flow/controls", "@dagrejs/dagre"],
+          // The graph canvas is only used by the topology module, so it stays out of
+          // that module's own route chunk. dagre is split again because only the
+          // editor's auto-layout reaches for it, and together they blow the budget.
+          graph: ["@vue-flow/core", "@vue-flow/background", "@vue-flow/controls"],
+          "graph-layout": ["@dagrejs/dagre"],
         },
       },
     },
