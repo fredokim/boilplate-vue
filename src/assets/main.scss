@@ -2,6 +2,7 @@
 // 기본 reset + layout 대응
 
 @use "./scss/generated/theme.scss";
+@use "./scss/design-system.scss";
 
 @use "./scss/component/alert.module.scss";
 @use "./scss/component/dialog.module.scss";

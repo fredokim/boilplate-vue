@@ -7,7 +7,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "jsx": "preserve",
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -22,9 +22,12 @@
       "@modules/*": ["src/app/modules/*"],
       "@layouts/*": ["src/app/layouts/*"],
       "@router/*": ["src/app/router/*"],
-      "@store/*": ["src/store/*"]
+      "@store/*": ["src/app/store/*"]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "noImplicitAny": true,
+    "useUnknownInCatchVariables": true,
+    "noUncheckedIndexedAccess": true
   }
 }

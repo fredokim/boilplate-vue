@@ -28,7 +28,8 @@ interface SidebarRoute extends Omit<RouteRecordRaw, "meta" | "children"> {
 
 const { isSidebar, toggleLayoutMode } = useLayoutSettings();
 
-const layoutChildren = (mainRoutes[0].children || []) as SidebarRoute[];
+const rootRoute = mainRoutes[0];
+const layoutChildren = (rootRoute?.children ?? []) as SidebarRoute[];
 
 const openMenus = reactive<Record<string, boolean>>({});
 const menuItems = computed<MenuItem[]>(() => {

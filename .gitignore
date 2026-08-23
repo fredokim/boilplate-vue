@@ -10,7 +10,14 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+storybook-static
+playwright-report
+reports
+test-results
 *.local
+src/**/*.js
+.figma-dashstack
+figma-contact-sheet.png
 
 # Editor directories and files
 .vscode/*

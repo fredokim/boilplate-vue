@@ -23,11 +23,12 @@ export function useCookie<T = string>(
     const cookieMatch = document.cookie.match(
       new RegExp("(^| )" + key + "=([^;]+)")
     );
-    if (cookieMatch) {
+    const cookieValue = cookieMatch?.[2];
+    if (cookieValue !== undefined) {
       try {
-        return JSON.parse(decodeURIComponent(cookieMatch[2]));
+        return JSON.parse(decodeURIComponent(cookieValue));
       } catch {
-        return cookieMatch[2] as unknown as T;
+        return cookieValue as unknown as T;
       }
     }
 

@@ -1,19 +1,26 @@
-// src/core/composable/useNotification.ts
-import { Component, inject } from "vue";
-import { EventBusKey } from "@core/service/event-bus.key";
-import { EventBusService } from "@core/service/event-bus.service";
+import type { Component } from "vue";
+import { inject } from "vue";
 
-function useEventBus(): EventBusService {
+import { EventBusKey } from "@core/service/event-bus.key";
+import type { AppEventBusService } from "@core/service/event-bus.service";
+import type { AppEventMap } from "@core/service/event-bus.types";
+
+export function useEventBus(): AppEventBusService {
   const bus = inject(EventBusKey);
-  if (!bus) throw new Error("EventBusService가 제공되지 않았습니다.");
+
+  if (!bus) {
+    throw new Error("EventBusService is not provided.");
+  }
+
   return bus;
 }
 
 export function useAlert() {
   const bus = useEventBus();
+
   return (
     message: string,
-    type: "success" | "error" | "info" | "warning" = "info",
+    type: AppEventMap["alert"]["type"] = "info",
     duration = 3000
   ) => {
     bus.alert({ message, type, duration });
@@ -22,12 +29,13 @@ export function useAlert() {
 
 export function useConfirm() {
   const bus = useEventBus();
+
   return (
     message: string,
     onConfirm: () => void,
     onCancel?: () => void,
-    confirmText = "확인",
-    cancelText = "취소"
+    confirmText = "Confirm",
+    cancelText = "Cancel"
   ) => {
     bus.confirm({ message, onConfirm, onCancel, confirmText, cancelText });
   };
@@ -35,6 +43,7 @@ export function useConfirm() {
 
 export function useDialog() {
   const bus = useEventBus();
+
   return (component: Component, props?: Record<string, unknown>) => {
     bus.dialog({ component, props });
   };
