@@ -9,15 +9,18 @@ type CacheEntry = {
 };
 
 /**
- * A deliberately small query cache. The React boilerplate gets deduplication, stale
- * time, and interval refresh from TanStack Query, but this repo's doctrine is Pinia
- * plus plain composables, and @tanstack/vue-query does not install cleanly here
- * because of a Vue 2 optional peer. This keeps the three behaviours the widgets
- * actually rely on, and nothing else:
+ * A deliberately small query cache covering the three behaviours the dashboard widgets
+ * rely on, and nothing else:
  *
  *  - two widgets sharing a query key issue one request
  *  - a result younger than staleTimeMs is served from cache
  *  - refresh is opt-in per widget rather than global
+ *
+ * The React boilerplate gets these from TanStack Query. @tanstack/vue-query is the
+ * direct equivalent and works on Vue 3, but npm installs its optional Vue 2 compat
+ * peer anyway and then fails on that package's own peer range. See the server-state
+ * caching decision in DEPENDENCY_STRATEGY.md for what this cache deliberately omits
+ * and when to switch.
  */
 export class WidgetDataCache {
   private readonly entries = new Map<string, CacheEntry>();
