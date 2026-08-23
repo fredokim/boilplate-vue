@@ -48,8 +48,10 @@ The canvas is the one component with a genuine library swap. Consequences worth 
   must provide those methods, or the view's `canvasRef.value?.focusRoute(...)` call fails.
 - The pane click handler cannot return a boolean through an event, so the canvas emits a
   mutable `handled` flag the editor sets when it consumes the click.
-- `@vue-flow/*` lives in its own `graph` vendor chunk and dagre in `graph-layout`.
-  Bundled together they exceeded the 190KB per-chunk budget; see `vite.config.ts`.
+- `@vue-flow/*` lives in its own `graph` vendor chunk and dagre in `graph-layout`. The
+  split was originally forced by a raw-byte chunk budget; it stays because dagre is only
+  reached by the editor's auto-layout, so a viewer-only visitor does not download it.
+  Together they are ~67KB gzip, well inside the budget. See `vite.config.ts`.
 
 ## Realtime pipeline
 

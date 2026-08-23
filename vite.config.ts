@@ -61,7 +61,7 @@ export default defineConfig({
           api: ["axios", "class-transformer", "class-validator", "reflect-metadata"],
           // The graph canvas is only used by the topology module, so it stays out of
           // that module's own route chunk. dagre is split again because only the
-          // editor's auto-layout reaches for it, and together they blow the budget.
+          // editor's auto-layout reaches for it, so viewing a topology never loads it.
           graph: ["@vue-flow/core", "@vue-flow/background", "@vue-flow/controls"],
           "graph-layout": ["@dagrejs/dagre"],
         },
