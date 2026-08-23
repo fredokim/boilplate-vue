@@ -2,13 +2,14 @@
 import RealtimeChat from "../chat/components/RealtimeChat.vue";
 import VideoPlayer from "../player/components/VideoPlayer.vue";
 import type { ChatMessage } from "../chat/model/chatMessage";
-import type { RealtimeConnectionState } from "../chat/realtime/realtimeChatAdapter";
+import type { ChatConnectionState, ChatDiagnostics } from "../chat/realtime/types";
 import type { VideoSource } from "../player/model/player";
 import "./liveExperience.scss";
 
 defineProps<{
   chatMessages: readonly ChatMessage[];
-  connectionState: RealtimeConnectionState;
+  chatDiagnostics: ChatDiagnostics;
+  connectionState: ChatConnectionState;
   videoSource: VideoSource;
 }>();
 </script>
@@ -23,7 +24,7 @@ defineProps<{
     </div>
     <div class="live-experience">
       <VideoPlayer :source="videoSource" title="Summer Stage · Live rehearsal" />
-      <RealtimeChat :connection-state="connectionState" :messages="chatMessages" />
+      <RealtimeChat :connection-state="connectionState" :diagnostics="chatDiagnostics" :messages="chatMessages" />
     </div>
   </div>
 </template>

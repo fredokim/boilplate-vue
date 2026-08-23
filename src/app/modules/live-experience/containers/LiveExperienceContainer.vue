@@ -1,30 +1,31 @@
 <script setup lang="ts">
 import LiveExperienceView from "../views/LiveExperienceView.vue";
 import { useRealtimeChat } from "../chat/composables/useRealtimeChat";
-import { createMockRealtimeChatAdapter } from "../chat/realtime/mockRealtimeChatAdapter";
-import type { RealtimeChatAdapter } from "../chat/realtime/realtimeChatAdapter";
+import { liveChatRoomId, liveChatTransport } from "../chat/realtime/liveChatRoom";
+import type { ChatTransport } from "../chat/realtime/types";
+import { progressiveDemoSource } from "../player/model/liveSources";
 import type { VideoSource } from "../player/model/player";
 
 const props = withDefaults(
   defineProps<{
-    adapter?: RealtimeChatAdapter;
+    transport?: ChatTransport;
+    roomId?: string;
+    source?: VideoSource;
   }>(),
-  {}
+  { roomId: liveChatRoomId, source: () => progressiveDemoSource },
 );
 
-const videoSource: VideoSource = {
-  kind: "progressive",
-  src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-  mimeType: "video/mp4",
-};
-
-const { connectionState, messages } = useRealtimeChat(props.adapter ?? createMockRealtimeChatAdapter());
+const { connectionState, diagnostics, messages } = useRealtimeChat({
+  roomId: props.roomId,
+  transport: props.transport ?? liveChatTransport,
+});
 </script>
 
 <template>
   <LiveExperienceView
+    :chat-diagnostics="diagnostics"
     :chat-messages="messages"
     :connection-state="connectionState"
-    :video-source="videoSource"
+    :video-source="source"
   />
 </template>

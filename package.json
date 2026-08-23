@@ -50,6 +50,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "grid-layout-plus": "^1.1.1",
+    "hls.js": "^1.7.1",
     "mitt": "^3.0.1",
     "pinia": "^3.0.2",
     "reflect-metadata": "^0.2.2",

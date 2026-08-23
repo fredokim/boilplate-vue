@@ -1,10 +1,14 @@
 import { effectScope } from "vue";
 import { describe, expect, it } from "vitest";
 
+import { initialPlayerState } from "../model/player";
 import { useVideoPlayerState } from "./useVideoPlayerState";
 
-function videoElement(currentTime: number, duration: number) {
-  return { currentTime, duration } as HTMLVideoElement;
+function videoElement(currentTime: number, duration: number, seekable: [number, number] | null = null) {
+  const ranges = seekable
+    ? ({ length: 1, start: () => seekable[0], end: () => seekable[1] } as unknown as TimeRanges)
+    : ({ length: 0, start: () => 0, end: () => 0 } as unknown as TimeRanges);
+  return { currentTime, duration, seekable: ranges } as HTMLVideoElement;
 }
 
 function runComposable() {
@@ -18,7 +22,7 @@ describe("useVideoPlayerState (Vue)", () => {
   it("starts idle with no timing", () => {
     const { player, scope } = runComposable();
 
-    expect(player.playerState.value).toEqual({ playbackState: "idle", currentTime: 0, duration: 0 });
+    expect(player.playerState.value).toEqual(initialPlayerState);
 
     scope.stop();
   });
@@ -29,7 +33,7 @@ describe("useVideoPlayerState (Vue)", () => {
     player.updateTiming(videoElement(12.5, 60));
     player.setPlaybackState("playing");
 
-    expect(player.playerState.value).toEqual({ playbackState: "playing", currentTime: 12.5, duration: 60 });
+    expect(player.playerState.value).toMatchObject({ playbackState: "playing", currentTime: 12.5, duration: 60 });
 
     scope.stop();
   });
