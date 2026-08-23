@@ -99,6 +99,8 @@ Use component tests for UI behavior and DTO tests for API contract boundaries.
 - `DESIGN_RATIONALE.md`: problem definition, component design method, key decisions, results, and retrospective.
 - `AI_DEVELOPMENT_GUIDE.md`: implementation rules for AI agents and teammates.
 - `API_CONTRACT.md`: backend response envelope and typed error ownership.
+- `ARCHITECTURE.md`: module boundaries, UI/data rules, and reactivity rules.
+- `CONTRIBUTING.md`: checklist for new components, composables, and modules.
 - `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
 - `AI_WORKFLOW.md`: AI-assisted Vue workflow and verification gates.
 - `PROMPT_PLAYBOOK.md`: prompts for implementation, review, refactoring, and testing.
