@@ -101,6 +101,7 @@ Use component tests for UI behavior and DTO tests for API contract boundaries.
 - `API_CONTRACT.md`: backend response envelope and typed error ownership.
 - `ARCHITECTURE.md`: module boundaries, UI/data rules, and reactivity rules.
 - `CONTRIBUTING.md`: checklist for new components, composables, and modules.
+- `VISUAL_GRAPH.md`: layer map, Vue Flow swap, realtime pipeline, and editing model for the graph module.
 - `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
 - `AI_WORKFLOW.md`: AI-assisted Vue workflow and verification gates.
 - `PROMPT_PLAYBOOK.md`: prompts for implementation, review, refactoring, and testing.
