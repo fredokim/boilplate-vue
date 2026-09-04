@@ -159,3 +159,22 @@ Light and dark themes are both defined in the source and emitted as
 `TOKEN_INVENTORY.md` in the React repository records what the three sets looked
 like before they were merged, including two tokens that were deliberately not
 merged.
+
+## Module generator
+
+```bash
+npm run generate:feature -- billing-report            # infers BillingReport
+npm run generate:feature -- billing-report Billing    # explicit resource name
+```
+
+Creates the DTO, api module, Pinia store, view, `router/routes.ts`, story, spec,
+and a README. The router collects `modules/**/router/routes.ts`, so a generated
+module is reachable without editing the router.
+
+`FEATURE_CONTRACT.md` records what a generated module contains and why, derived
+from the modules that already exist rather than copied from the React
+boilerplate — the conventions genuinely differ.
+
+`npm run check:generators` runs the generator and checks its output against the
+contract; it is part of `check:ci`. Regenerating over an existing module refuses
+rather than overwriting.
