@@ -1,4 +1,4 @@
-import { apiClient } from "@core/api";
+import { apiClient, markRetried } from "@core/api";
 
 import { AuthSessionDto, AuthSessionUserDto, SocialAuthorizeDto } from "../dto/Auth.dto";
 import type { LoginRequest, SocialCallbackRequest } from "../dto/Auth.dto";
@@ -20,7 +20,12 @@ export function fetchSession() {
  * read.
  */
 export function refreshSession() {
-  return apiClient.post(`${basePath}/refresh`, undefined, AuthSessionDto);
+  // Marked as already-retried before it is sent. That is not a detail: the
+  // response interceptor reacts to a 401 by awaiting the in-flight refresh, and
+  // this *is* the in-flight refresh — so a 401 here would leave it awaiting its
+  // own promise. Opting out makes an expired refresh cookie surface as a failed
+  // refresh instead of a hang.
+  return apiClient.post(`${basePath}/refresh`, undefined, AuthSessionDto, markRetried({}));
 }
 
 export function fetchSocialAuthorizeUrl(provider: SocialProvider) {

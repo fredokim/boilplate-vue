@@ -5,3 +5,4 @@ export * from "./http-client";
 export * from "./validate-dto";
 
 export { isAuthRequired } from "./api-error";
+export { hasBeenRetried, markRetried, RefreshSingleFlight } from "./refresh-single-flight";

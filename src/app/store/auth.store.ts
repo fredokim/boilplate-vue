@@ -11,6 +11,25 @@ import { authSessionStateSchema, authStateSnapshotSchema, authUserStateSchema } 
 
 apiClient.setAccessTokenProvider(() => tokenStorage.getAccessToken());
 
+/**
+ * Lets an expired access token recover instead of ending the session.
+ *
+ * A failed refresh clears the session rather than leaving the store holding a
+ * token the server has stopped honouring — a state where the UI looks signed in
+ * and every request 401s.
+ */
+apiClient.setTokenRefresher(async () => {
+  try {
+    const session = await authApi.refreshSession();
+
+    useAuthStore().setSession(session);
+    return session.accessToken;
+  } catch {
+    useAuthStore().clearSession();
+    return null;
+  }
+});
+
 export const useAuthStore = defineStore("auth", () => {
   const initialSnapshot = fallbackState(
     authStateSnapshotSchema,

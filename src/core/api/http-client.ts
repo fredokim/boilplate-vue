@@ -6,6 +6,7 @@ import { TypedApiError } from "./api-error";
 import { createApiResponseDto } from "./api-response.dto";
 import type { BaseApiResponseDto } from "./api-response.dto";
 import type { DtoConstructor } from "./dto-constructor";
+import { hasBeenRetried, markRetried, RefreshSingleFlight } from "./refresh-single-flight";
 import { validateDto } from "./validate-dto";
 
 export interface TypedHttpClientOptions {
@@ -15,9 +16,21 @@ export interface TypedHttpClientOptions {
 
 type AccessTokenProvider = () => string | null;
 
+/**
+ * Exchanges the refresh cookie for a new access token, or returns null.
+ *
+ * Registered from the outside for the same reason the token provider is: this
+ * module must not import the auth store, or `core` would depend on `app` and
+ * every test touching the client would drag the store in with it.
+ *
+ * Until something registers one, a 401 is simply a 401.
+ */
+type TokenRefresher = () => Promise<string | null>;
+
 export class TypedHttpClient {
   private readonly client: AxiosInstance;
   private accessTokenProvider: AccessTokenProvider | null = null;
+  private refreshRunner: RefreshSingleFlight | null = null;
 
   constructor(options: TypedHttpClientOptions = {}) {
     this.client = axios.create({
@@ -40,10 +53,51 @@ export class TypedHttpClient {
 
       return config;
     });
+
+    this.client.interceptors.response.use(undefined, async (error: unknown) => {
+      const retried = await this.retryAfterRefresh(error);
+
+      if (retried) return retried;
+
+      throw error;
+    });
+  }
+
+  /**
+   * One retry, and only for a 401 on a request that has not already been
+   * retried. The flag is what stops a revoked session from looping: refresh,
+   * 401, refresh, forever.
+   *
+   * The refresh itself is single-flighted, because the backend rotates refresh
+   * tokens and reads a re-presented one as a replay — five parallel refreshes
+   * would revoke the session they were trying to renew.
+   */
+  private async retryAfterRefresh(error: unknown) {
+    if (!axios.isAxiosError(error)) return null;
+    if (error.response?.status !== 401) return null;
+
+    const config = error.config;
+
+    if (!config || this.refreshRunner === null || hasBeenRetried(config)) return null;
+
+    const token = await this.refreshRunner.run();
+
+    if (token === null) return null;
+
+    markRetried(config);
+    const headers = AxiosHeaders.from(config.headers);
+    headers.set("Authorization", `Bearer ${token}`);
+    config.headers = headers;
+
+    return this.client.request(config);
   }
 
   setAccessTokenProvider(provider: AccessTokenProvider | null) {
     this.accessTokenProvider = provider;
+  }
+
+  setTokenRefresher(refresher: TokenRefresher | null) {
+    this.refreshRunner = refresher ? new RefreshSingleFlight(refresher) : null;
   }
 
   get<TData>(
