@@ -6,7 +6,7 @@ import { KpiDataDto, SeriesDataDto, TableDataDto } from "./dashboardDataSource.d
 type Parameters = Record<string, DataSourceParameter>;
 
 export const dashboardDataSourceApi = {
-  salesSummary: (parameters: Parameters) => apiClient.get("/dashboard/kpi", KpiDataDto, { params: parameters }),
-  trafficSeries: (parameters: Parameters) => apiClient.get("/dashboard/chart", SeriesDataDto, { params: parameters }),
-  recentEvents: (parameters: Parameters) => apiClient.get("/dashboard/table", TableDataDto, { params: parameters }),
+  salesSummary: (parameters: Parameters) => apiClient.get("/api/dashboard/kpi", KpiDataDto, { params: parameters }),
+  trafficSeries: (parameters: Parameters) => apiClient.get("/api/dashboard/chart", SeriesDataDto, { params: parameters }),
+  recentEvents: (parameters: Parameters) => apiClient.get("/api/dashboard/table", TableDataDto, { params: parameters }),
 };

@@ -20,6 +20,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
+      # The frontend's assumptions checked against the backend's published
+      # spec, vendored in contracts/ because the backend is its own repository.
+      - run: npm run check:contract
       - run: npm run check:ai
       - run: npm run check:automation
       - run: npm run build

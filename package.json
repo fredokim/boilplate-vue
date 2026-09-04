@@ -21,6 +21,8 @@
     "prestorybook": "npm run generate-theme-scss && npm run lint && npm run typecheck",
     "typecheck": "vue-tsc -b",
     "test": "vitest run",
+    "check:contract": "vitest run src/test/contract",
+    "contract:sync": "node -e \"require('node:fs').copyFileSync(process.env.SERVER_REPO ? process.env.SERVER_REPO + '/openapi.json' : '../boilplate-server/openapi.json', 'contracts/openapi.json')\"",
     "e2e": "playwright test",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -39,7 +41,7 @@
     "check:generators": "tsx scripts/check-generators.ts",
     "check:bundle": "tsx scripts/check-bundle-budget.ts",
     "check:deps": "tsx scripts/check-dependency-size.ts",
-    "check:ci": "npm run check:tokens && npm run generate-theme-scss && npm run lint && npm run typecheck && npm run test && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
+    "check:ci": "npm run check:tokens && npm run generate-theme-scss && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
     "lint": "eslint \"{src,scripts,.storybook}/**/*.{js,ts,vue}\" --max-warnings=0",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
