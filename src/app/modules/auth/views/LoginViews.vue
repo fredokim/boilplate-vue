@@ -13,6 +13,7 @@ import { logger } from "@core/observability/logger";
 import { useAuthStore } from "@store/auth.store";
 import { loginSchema, type LoginInput } from "../schema/login.schema";
 import { socialProviders } from "../social/social-provider";
+import { shouldOfferDemoSession } from "@core/config/dataMode";
 
 const auth = useAuthStore();
 const route = useRoute();
@@ -53,6 +54,11 @@ async function submitLogin() {
   }
 }
 
+/**
+ * Hidden in server mode. The demo session carries a token the backend never
+ * issued, so the first authenticated request fails — which reads as a broken
+ * login rather than as demo data.
+ */
 async function useDemoLogin() {
   auth.useDemoSession();
   await router.push(getRedirectPath());
@@ -119,6 +125,7 @@ async function useDemoLogin() {
             {{ isLoading ? "Signing in" : "Sign in" }}
           </BaseButton>
           <BaseButton
+            v-if="shouldOfferDemoSession"
             type="button"
             variant="outline"
             tone="neutral"

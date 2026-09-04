@@ -17,6 +17,7 @@
     "generate:feature": "tsx scripts/generate-feature.ts",
     "predev": "npm run generate-theme-scss && npm run lint && npm run typecheck",
     "dev": "vite",
+    "dev:server-mode": "cross-env VITE_DATA_MODE=server npm run dev",
     "prestorybook": "npm run generate-theme-scss && npm run lint && npm run typecheck",
     "typecheck": "vue-tsc -b",
     "test": "vitest run",

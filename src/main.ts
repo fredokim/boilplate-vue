@@ -5,6 +5,14 @@ import { initWebVitals } from "@core/analytics";
 import { pinia } from "@store/index";
 import { initTheme } from "@core/theme";
 import { EventBusKey } from "@core/service/event-bus.key";
+/**
+ * Imported for its side effect: the module refuses a production build running
+ * on demo data, and rejects a misspelled VITE_DATA_MODE. Evaluating it here
+ * means that happens at startup. Reached only through a lazily loaded view, the
+ * guard would let a bad build boot and fail later, on whichever screen happened
+ * to import it first.
+ */
+import "@core/config/dataMode";
 import { appEventBus } from "@core/service/event-bus.service";
 
 import App from "./App.vue";
