@@ -1,14 +1,5 @@
-:root {
-  --ds-color-neutral-0: #ffffff;
-  --ds-color-neutral-50: #f8fafc;
-  --ds-color-neutral-100: #f1f5f9;
-  --ds-color-neutral-200: #e2e8f0;
-  --ds-color-neutral-300: #cbd5e1;
-  --ds-color-neutral-500: #64748b;
-  --ds-color-neutral-700: #334155;
-  --ds-color-neutral-900: #0f172a;
-  --ds-focus-ring: 0 0 0 3px rgb(59 130 246 / 0.25);
-}
+// 중립색 계조와 focus ring은 tokens/tokens.json 에서 생성되어
+// generated/ds-neutral.scss 에 있다. main.scss 가 이 파일보다 먼저 불러온다.
 
 .ds-button {
   display: inline-flex;

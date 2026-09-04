@@ -1,3 +1,6 @@
+// AUTO-GENERATED from tokens/tokens.json. Do not edit.
+// Regenerate: npm run tokens:build
+
 export const colorKeys = [
   "primary",
   "secondary",
