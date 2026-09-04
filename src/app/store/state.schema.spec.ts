@@ -16,7 +16,7 @@ describe("store state schemas", () => {
         id: "demo-admin",
         name: "Demo Admin",
         email: "admin@example.com",
-        roles: ["admin", "users:read"],
+        permissions: ["dashboard:read", "user:read"],
       },
       "auth.user.test",
     );

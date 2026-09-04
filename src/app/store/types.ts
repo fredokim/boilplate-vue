@@ -11,7 +11,8 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
-  roles: string[];
+  /** The server sends permissions, not role names. */
+  permissions: string[];
 }
 
 export interface BreadcrumbItem {

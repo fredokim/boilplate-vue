@@ -2,7 +2,6 @@ import axios, { AxiosHeaders } from "axios";
 import type { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 
 import { analytics } from "@core/analytics";
-import { ApiStatusEnum } from "@shared/enum/result.enum";
 import { TypedApiError } from "./api-error";
 import { createApiResponseDto } from "./api-response.dto";
 import type { BaseApiResponseDto } from "./api-response.dto";
@@ -89,15 +88,15 @@ export class TypedHttpClient {
         { method, url }
       );
 
-      if (dto.status !== ApiStatusEnum.SUCCESS) {
+      if (!dto.success) {
         throw new TypedApiError(
           "backend",
           "business_status",
-          dto.message ?? "Backend returned a failed business status.",
+          dto.error?.message ?? "Backend returned a failed business status.",
           {
             method,
             url,
-            code: dto.code,
+            code: dto.error?.code,
             raw: response.data,
           }
         );
@@ -152,6 +151,11 @@ export class TypedHttpClient {
     context: { method?: string; url?: string }
   ): TypedApiError {
     if (error.response) {
+      // The code is pulled out of the failure envelope. Without this it stays
+      // buried in `raw`, and callers that need to tell "not signed in" from any
+      // other 401 have to reach into an untyped blob to do it.
+      const body = error.response.data as { error?: { code?: string } } | undefined;
+
       return new TypedApiError(
         "backend",
         "http_status",
@@ -159,6 +163,7 @@ export class TypedHttpClient {
         {
           ...context,
           status: error.response.status,
+          ...(body?.error?.code === undefined ? {} : { code: body.error.code }),
           raw: error.response.data,
           cause: error,
         }

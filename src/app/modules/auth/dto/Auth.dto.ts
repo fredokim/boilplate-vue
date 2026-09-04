@@ -4,7 +4,6 @@ import {
   IsArray,
   IsEmail,
   IsEnum,
-  IsOptional,
   IsString,
   MinLength,
   ValidateNested,
@@ -25,11 +24,24 @@ export class AuthUserDto {
   @IsEmail()
   email!: string;
 
+  /**
+   * The server sends permissions, not role names. It used to be `roles` here,
+   * which the store then aliased to permissions anyway — the demo session held
+   * `["admin", "users:read"]`, one of each.
+   */
   @IsArray()
   @IsString({ each: true })
-  roles!: string[];
+  permissions!: string[];
 }
 
+/**
+ * What `POST /auth/login` and `POST /auth/refresh` return.
+ *
+ * There is no refresh token here, and there never will be: the server keeps it
+ * in an HttpOnly cookie and deliberately never puts it in a response body. This
+ * DTO used to declare an optional `refreshToken`, so the code below stored a
+ * value that was always undefined.
+ */
 export class AuthSessionDto {
   @ValidateNested()
   @Type(() => AuthUserDto)
@@ -37,10 +49,19 @@ export class AuthSessionDto {
 
   @IsString()
   accessToken!: string;
+}
 
-  @IsString()
-  @IsOptional()
-  refreshToken?: string;
+/**
+ * What `GET /auth/session` returns — the user only.
+ *
+ * Session restore does not mint a new access token. Reusing AuthSessionDto here
+ * made the client require an `accessToken` the server does not send, so every
+ * session check failed validation.
+ */
+export class AuthSessionUserDto {
+  @ValidateNested()
+  @Type(() => AuthUserDto)
+  user!: AuthUserDto;
 }
 
 export class LoginRequestDto {

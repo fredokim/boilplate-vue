@@ -7,7 +7,7 @@ import { fallbackState, parseState } from "@core/state/validate-state";
 import { authApi } from "@modules/auth/api/auth.api";
 import type { AuthSessionDto, LoginRequest } from "@modules/auth/dto/Auth.dto";
 import type { AuthUser, LoadState, StoreFailure } from "./types";
-import { authSessionStateSchema, authStateSnapshotSchema } from "./auth.schema";
+import { authSessionStateSchema, authStateSnapshotSchema, authUserStateSchema } from "./auth.schema";
 
 apiClient.setAccessTokenProvider(() => tokenStorage.getAccessToken());
 
@@ -35,8 +35,9 @@ export const useAuthStore = defineStore("auth", () => {
   const sessionChecked = ref(initialSnapshot.sessionChecked);
 
   const isAuthenticated = computed(() => Boolean(user.value && accessToken.value));
-  const roles = computed(() => user.value?.roles ?? []);
-  const permissions = computed(() => roles.value);
+  const permissions = computed(() => user.value?.permissions ?? []);
+  /** Kept as an alias so existing call sites keep working. The server sends permissions. */
+  const roles = permissions;
 
   function setSession(session: AuthSessionDto) {
     const nextSession = parseState(authSessionStateSchema, session, "auth.setSession.session");
@@ -56,10 +57,9 @@ export const useAuthStore = defineStore("auth", () => {
     status.value = "success";
     failure.value = null;
     sessionChecked.value = nextSnapshot.sessionChecked;
-    tokenStorage.setTokens({
-      accessToken: nextSession.accessToken,
-      refreshToken: nextSession.refreshToken,
-    });
+    // Access token only. The refresh token is an HttpOnly cookie the browser
+    // manages; JavaScript never sees it, so there is nothing to store.
+    tokenStorage.setTokens({ accessToken: nextSession.accessToken });
   }
 
   function setLoading() {
@@ -135,7 +135,16 @@ export const useAuthStore = defineStore("auth", () => {
     setLoading();
 
     try {
-      setSession(await authApi.fetchSession());
+      // The session endpoint returns the user and no token: it confirms who the
+      // current access token belongs to, it does not mint a new one. Replacing
+      // the whole session here would demand an accessToken the server never
+      // sends.
+      const { user: currentUser } = await authApi.fetchSession();
+
+      user.value = parseState(authUserStateSchema, currentUser, "auth.checkSession.user");
+      status.value = "success";
+      failure.value = null;
+      sessionChecked.value = true;
       return true;
     } catch (error) {
       clearSession();
@@ -145,17 +154,13 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function refreshSession() {
-    const refreshToken = tokenStorage.getRefreshToken();
-
-    if (!refreshToken) {
-      clearSession();
-      return false;
-    }
-
     setLoading();
 
     try {
-      setSession(await authApi.refreshSession(refreshToken));
+      // No argument and no local check for a stored token: the refresh token is
+      // an HttpOnly cookie. Its absence shows up as a 401 from the server, which
+      // is the only place that can actually tell.
+      setSession(await authApi.refreshSession());
       return true;
     } catch (error) {
       clearSession();
@@ -167,12 +172,11 @@ export const useAuthStore = defineStore("auth", () => {
   function useDemoSession() {
     setSession({
       accessToken: "demo-access-token",
-      refreshToken: "demo-refresh-token",
       user: {
         id: "demo-admin",
         name: "Demo Admin",
         email: "admin@example.com",
-        roles: ["admin", "users:read"],
+        permissions: ["dashboard:read", "user:read"],
       },
     });
   }

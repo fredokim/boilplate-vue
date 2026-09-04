@@ -16,7 +16,8 @@ describe("auth store", () => {
 
     expect(auth.isAuthenticated).toBe(true);
     expect(auth.accessToken).toBe("demo-access-token");
-    expect(auth.hasPermission("users:read")).toBe(true);
+    // `user:read` is what the backend actually grants; `users:read` never existed.
+    expect(auth.hasPermission("user:read")).toBe(true);
     expect(localStorage.getItem("boilerplate.accessToken")).toBe(
       "demo-access-token"
     );

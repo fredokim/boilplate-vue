@@ -1,6 +1,5 @@
 import type { BaseApiResponseDto } from "@core/api";
 import { isTypedApiError, TypedApiError, validateDto } from "@core/api";
-import { ApiStatusEnum } from "@shared/enum/result.enum";
 
 export interface ApiResultFailure {
   code?: string;
@@ -18,10 +17,10 @@ export async function useApiResult<TData, TRaw = unknown>(
     const raw = await request;
     const dto = validateDto(raw, ResponseDto);
 
-    if (dto.status !== ApiStatusEnum.SUCCESS) {
+    if (!dto.success) {
       onError?.({
-        code: dto.code,
-        message: dto.message ?? "Backend returned a failed business status.",
+        code: dto.error?.code,
+        message: dto.error?.message ?? "Backend returned a failed business status.",
         origin: "backend",
         kind: "business_status",
       });

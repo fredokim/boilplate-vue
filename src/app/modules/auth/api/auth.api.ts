@@ -1,6 +1,6 @@
 import { apiClient } from "@core/api";
 
-import { AuthSessionDto, SocialAuthorizeDto } from "../dto/Auth.dto";
+import { AuthSessionDto, AuthSessionUserDto, SocialAuthorizeDto } from "../dto/Auth.dto";
 import type { LoginRequest, SocialCallbackRequest } from "../dto/Auth.dto";
 import type { SocialProvider } from "../social/social-provider";
 
@@ -11,15 +11,16 @@ export function login(body: LoginRequest) {
 }
 
 export function fetchSession() {
-  return apiClient.get(`${basePath}/session`, AuthSessionDto);
+  return apiClient.get(`${basePath}/session`, AuthSessionUserDto);
 }
 
-export function refreshSession(refreshToken: string) {
-  return apiClient.post(
-    `${basePath}/refresh`,
-    { refreshToken },
-    AuthSessionDto
-  );
+/**
+ * Takes no argument. The refresh token is an HttpOnly cookie the browser sends
+ * on its own; this used to pass one from local storage, which the server never
+ * read.
+ */
+export function refreshSession() {
+  return apiClient.post(`${basePath}/refresh`, undefined, AuthSessionDto);
 }
 
 export function fetchSocialAuthorizeUrl(provider: SocialProvider) {

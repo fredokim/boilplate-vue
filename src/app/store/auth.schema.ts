@@ -7,13 +7,12 @@ export const authUserStateSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   email: z.email(),
-  roles: z.array(z.string()),
+  permissions: z.array(z.string()),
 }) satisfies z.ZodType<InferDto<typeof AuthUserDto>>;
 
 export const authSessionStateSchema = z.object({
   user: authUserStateSchema,
   accessToken: z.string().min(1),
-  refreshToken: z.string().min(1).optional(),
 }) satisfies z.ZodType<InferDto<typeof AuthSessionDto>>;
 
 export const authStateSnapshotSchema = z.object({

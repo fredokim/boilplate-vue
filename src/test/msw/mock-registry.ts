@@ -1,6 +1,5 @@
 import { http, HttpResponse } from "msw";
 
-import { ApiStatusEnum } from "@shared/enum/result.enum";
 
 export type MockRegistryEntry = {
   method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -15,17 +14,19 @@ export const mockRegistry = [
   {
     method: "GET",
     endpoint: "/api/auth/session",
+    // The session endpoint returns the user and nothing else. No access token,
+    // and never a refresh token — that one only ever exists as an HttpOnly
+    // cookie. A mock that hands out more than the server does lets code depend
+    // on fields that will not be there.
     success: http.get("/api/auth/session", () =>
       HttpResponse.json({
-        status: ApiStatusEnum.SUCCESS,
+        success: true,
         data: {
-          accessToken: "mock-access-token",
-          refreshToken: "mock-refresh-token",
           user: {
             id: "mock-user",
             name: "Mock User",
             email: "mock@example.com",
-            roles: ["admin", "users:read"],
+            permissions: ["dashboard:read", "user:read"],
           },
         },
       }),
@@ -36,7 +37,7 @@ export const mockRegistry = [
     endpoint: "/api/users/:id",
     success: http.get("/api/users/:id", ({ params }) =>
       HttpResponse.json({
-        status: ApiStatusEnum.SUCCESS,
+        success: true,
         data: {
           id: String(params.id),
           name: "Mock User",
@@ -47,7 +48,7 @@ export const mockRegistry = [
     ),
     invalid: http.get("/api/users/:id", () =>
       HttpResponse.json({
-        status: ApiStatusEnum.SUCCESS,
+        success: true,
         data: {
           id: 1,
           name: null,

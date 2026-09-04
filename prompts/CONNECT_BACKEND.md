@@ -48,6 +48,11 @@ vue의 DTO는 MSW mock에 맞춰 쓰였고, 서버가 실제로 보내는 것과
 | 로그인 응답 | `{ user, accessToken, refreshToken? }` | `{ accessToken, user }` |
 | 세션 응답 | `AuthSessionDto` (accessToken 포함) | `{ user }` 만 |
 | 갱신 요청 | 본문에 `{ refreshToken }` | 본문 없음. HttpOnly 쿠키에서 읽음 |
+| **봉투** | `{ status: "SUCCESS", code?, message?, data }` | `{ success, data }` / `{ success, error: { code, message } }` |
+
+마지막 줄은 이 표를 처음 쓸 때 빠져 있었고, 실제로는 **가장 큰 불일치**다.
+봉투에 `status` 필드가 없으므로 서버의 어떤 응답도 검증을 통과하지 못한다.
+즉 DTO 네 개를 고쳐도 그 전에 모든 호출이 실패한다.
 
 마지막 줄이 특히 중요하다. 서버는 refresh token을 **응답 본문에 절대 넣지
 않는다.** 쿠키로만 오간다. vue의 `refreshSession(refreshToken)`은 서버가
