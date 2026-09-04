@@ -25,4 +25,10 @@ jobs:
       - run: npm run build
       - run: npm run check:bundle
       - run: npm run build-storybook
+      # The application did not boot at all while every other gate was green:
+      # two modules declared a route named after their own directory, and
+      # vue-router throws when a child shares a name with its ancestor. Unit
+      # tests mount components directly and never build the router.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
       - run: npm audit --audit-level=moderate

@@ -43,6 +43,30 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 5173,
     strictPort: true,
+    /**
+     * Forwards `/api` to the shared backend so server mode works in development.
+     *
+     * The api modules use relative paths (`/api/auth/login`), so without this
+     * the browser asks Vite for them and gets the SPA fallback — a 200 full of
+     * HTML that only fails later, at DTO validation, pointing at the wrong
+     * thing entirely.
+     *
+     * A proxy rather than an absolute URL: the refresh token is an HttpOnly
+     * cookie with `sameSite: lax`, so the browser has to see one origin or it
+     * never sends it. The backend is shared with the React and Next.js
+     * boilerplates and cannot be bundled with any one of them.
+     *
+     * `ws: true` covers the two gateways, `/api/topology` and `/api/live/chat`.
+     * Mock mode never reaches any of this — nothing is proxied because nothing
+     * is requested.
+     */
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_TARGET ?? "http://127.0.0.1:3001",
+        changeOrigin: true,
+        ws: true,
+      },
+    },
   },
   preview: {
     host: "127.0.0.1",

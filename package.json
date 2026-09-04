@@ -20,6 +20,7 @@
     "prestorybook": "npm run generate-theme-scss && npm run lint && npm run typecheck",
     "typecheck": "vue-tsc -b",
     "test": "vitest run",
+    "e2e": "playwright test",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
