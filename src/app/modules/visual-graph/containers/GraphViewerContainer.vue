@@ -47,8 +47,8 @@ import {
   type NetworkNodeType,
 } from "../network/networkGraph";
 import { networkRouteService } from "../network/networkRoutes";
-import { networkRuntimeSource } from "../network/networkRealtime";
-import { createGraphRuntimeSource, type GraphRuntimeSource } from "../realtime/graphRuntimeSource";
+import { networkRealtimeSource } from "../network/networkRealtime";
+import { createGraphRuntimeSource, type GraphRealtimeSource } from "../realtime/graphRuntimeSource";
 import type { GraphRouteService } from "../services/graphRouteService";
 import { useTopologyRealtime } from "../realtime/useTopologyRealtime";
 
@@ -64,7 +64,7 @@ const props = withDefaults(
     validationService?: NetworkValidationService;
     initialRoute?: GraphRoute | null;
     initialEditMode?: boolean;
-    realtimeSource?: GraphRuntimeSource;
+    realtimeSource?: GraphRealtimeSource;
   }>(),
   { graph: () => networkGraph, initialRoute: null, initialEditMode: false }
 );
@@ -98,7 +98,7 @@ const routeQuery = ref<GraphRouteQueryState>(
 );
 let requestSequence = 0;
 
-const source = props.realtimeSource ?? (props.graph === networkGraph ? networkRuntimeSource : createGraphRuntimeSource(props.graph));
+const source = props.realtimeSource ?? (props.graph === networkGraph ? networkRealtimeSource : createGraphRuntimeSource(props.graph));
 const realtime = useTopologyRealtime({
   topologyId: source.topologyId,
   graph: props.graph,
@@ -107,10 +107,11 @@ const realtime = useTopologyRealtime({
   selectedNodeId: () => interaction.selection.nodeIds[0] ?? null,
 });
 
-if (source.eventsPerSecond) {
-  source.transport.startStress(source.eventsPerSecond, source.createEvent);
-  onScopeDispose(() => source.transport.stopStress());
-}
+// Only the scripted mock has a driver. A server source leaves this absent, so
+// the demo's synthetic event stream cannot run on top of the gateway's real one.
+const stopDriving = source.driveEvents?.();
+
+if (stopDriving) onScopeDispose(stopDriving);
 
 const draftGraph = computed(() => session.value.draftGraph);
 const editMode = computed(() => session.value.editMode && draftGraph.value !== undefined);
