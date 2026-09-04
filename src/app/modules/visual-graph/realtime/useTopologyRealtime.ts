@@ -1,101 +1,101 @@
-import { computed, onScopeDispose, shallowRef, toValue, watch, type MaybeRefOrGetter } from "vue";
-import { watchForIdle } from "@/core/realtime/idleSuspension";
-
-import type { GraphDocument, GraphMetadata } from "../model/graph";
-import { TopologyRealtimeController } from "./controller";
-import { TopologyRuntimeStore } from "./runtimeStore";
-import type { RuntimeSnapshotProvider } from "./types";
-import type { TopologyRealtimeTransport } from "./transport";
-
-const STALE_TICK_MS = 5_000;
-
-/**
- * The runtime store is framework-agnostic: it exposes subscribe/getSnapshot, which React
- * consumes through useSyncExternalStore and Vue consumes by pushing each snapshot into a
- * shallowRef. Nothing below this file knows which framework is rendering.
- */
-export function useTopologyRealtime<
-  TNodeType extends string,
-  TNodeMetadata extends GraphMetadata,
-  TEdgeMetadata extends GraphMetadata,
->(options: {
-  topologyId: string;
-  graph: GraphDocument<TNodeType, TNodeMetadata, TEdgeMetadata>;
-  transport: TopologyRealtimeTransport;
-  loadSnapshot: RuntimeSnapshotProvider;
-  selectedNodeId: MaybeRefOrGetter<string | null>;
-}) {
-  const { graph, loadSnapshot, topologyId, transport } = options;
-
-  const store = new TopologyRuntimeStore({
-    knownNodeIds: graph.nodes.map((node) => node.id),
-    knownEdgeIds: graph.edges.map((edge) => edge.id),
-  });
-  const controller = new TopologyRealtimeController({ topologyId, transport, store, loadSnapshot });
-
-  const runtime = shallowRef(store.getSnapshot());
-  const connectionState = shallowRef(transport.getConnectionState());
-  const now = shallowRef(0);
-
-  const unsubscribeStore = store.subscribe(() => {
-    runtime.value = store.getSnapshot();
-  });
-  const unsubscribeConnection = transport.subscribeConnection((state) => {
-    connectionState.value = state;
-  });
-
-  void controller.start();
-
-  const onVisibility = () => controller.setHidden(document.hidden);
-  document.addEventListener("visibilitychange", onVisibility);
-  const staleTimer = setInterval(() => {
-    now.value = Date.now();
-  }, STALE_TICK_MS);
-
-  /**
-   * Hands the socket back when nobody is watching. An open socket is continuous
-   * traffic, so a forgotten tab keeps a free instance awake all night for the
-   * same cost as one in use.
-   *
-   * `stop()` and `start()` rather than a new pair of methods: stop already
-   * disconnects and blocks the reconnect backoff, and start resubscribes and
-   * resyncs from a fresh snapshot -- which is what a viewer who has been away
-   * needs anyway, since the retention window may have moved past them.
-   */
-  const stopIdleWatch = watchForIdle({
-    onIdle: () => controller.stop(),
-    onResume: () => void controller.start(),
-  });
-
-  const stopSelectionWatch = watch(
-    () => toValue(options.selectedNodeId),
-    (nodeId) => store.setMonitoredNode(nodeId),
-    { immediate: true },
-  );
-
-  onScopeDispose(() => {
-    stopIdleWatch();
-    stopSelectionWatch();
-    clearInterval(staleTimer);
-    document.removeEventListener("visibilitychange", onVisibility);
-    unsubscribeConnection();
-    unsubscribeStore();
-    controller.stop();
-  });
-
-  const selectedMetricHistory = computed(() => {
-    const nodeId = toValue(options.selectedNodeId);
-    // Reading `now` and `runtime` keeps the history in step with incoming flushes.
-    void runtime.value;
-    return nodeId ? store.getMetricHistory(nodeId) : {};
-  });
-
-  return {
-    runtime,
-    connectionState,
-    now,
-    selectedMetricHistory,
-    isNodeStale: (nodeId: string, thresholdMs = 30_000) => store.isNodeStale(nodeId, now.value, thresholdMs),
-    resync: () => controller.resync(),
-  };
-}
+import { computed, onScopeDispose, shallowRef, toValue, watch, type MaybeRefOrGetter } from "vue";
+import { watchForIdle } from "@core/realtime/idleSuspension";
+
+import type { GraphDocument, GraphMetadata } from "../model/graph";
+import { TopologyRealtimeController } from "./controller";
+import { TopologyRuntimeStore } from "./runtimeStore";
+import type { RuntimeSnapshotProvider } from "./types";
+import type { TopologyRealtimeTransport } from "./transport";
+
+const STALE_TICK_MS = 5_000;
+
+/**
+ * The runtime store is framework-agnostic: it exposes subscribe/getSnapshot, which React
+ * consumes through useSyncExternalStore and Vue consumes by pushing each snapshot into a
+ * shallowRef. Nothing below this file knows which framework is rendering.
+ */
+export function useTopologyRealtime<
+  TNodeType extends string,
+  TNodeMetadata extends GraphMetadata,
+  TEdgeMetadata extends GraphMetadata,
+>(options: {
+  topologyId: string;
+  graph: GraphDocument<TNodeType, TNodeMetadata, TEdgeMetadata>;
+  transport: TopologyRealtimeTransport;
+  loadSnapshot: RuntimeSnapshotProvider;
+  selectedNodeId: MaybeRefOrGetter<string | null>;
+}) {
+  const { graph, loadSnapshot, topologyId, transport } = options;
+
+  const store = new TopologyRuntimeStore({
+    knownNodeIds: graph.nodes.map((node) => node.id),
+    knownEdgeIds: graph.edges.map((edge) => edge.id),
+  });
+  const controller = new TopologyRealtimeController({ topologyId, transport, store, loadSnapshot });
+
+  const runtime = shallowRef(store.getSnapshot());
+  const connectionState = shallowRef(transport.getConnectionState());
+  const now = shallowRef(0);
+
+  const unsubscribeStore = store.subscribe(() => {
+    runtime.value = store.getSnapshot();
+  });
+  const unsubscribeConnection = transport.subscribeConnection((state) => {
+    connectionState.value = state;
+  });
+
+  void controller.start();
+
+  const onVisibility = () => controller.setHidden(document.hidden);
+  document.addEventListener("visibilitychange", onVisibility);
+  const staleTimer = setInterval(() => {
+    now.value = Date.now();
+  }, STALE_TICK_MS);
+
+  /**
+   * Hands the socket back when nobody is watching. An open socket is continuous
+   * traffic, so a forgotten tab keeps a free instance awake all night for the
+   * same cost as one in use.
+   *
+   * `stop()` and `start()` rather than a new pair of methods: stop already
+   * disconnects and blocks the reconnect backoff, and start resubscribes and
+   * resyncs from a fresh snapshot -- which is what a viewer who has been away
+   * needs anyway, since the retention window may have moved past them.
+   */
+  const stopIdleWatch = watchForIdle({
+    onIdle: () => controller.stop(),
+    onResume: () => void controller.start(),
+  });
+
+  const stopSelectionWatch = watch(
+    () => toValue(options.selectedNodeId),
+    (nodeId) => store.setMonitoredNode(nodeId),
+    { immediate: true },
+  );
+
+  onScopeDispose(() => {
+    stopIdleWatch();
+    stopSelectionWatch();
+    clearInterval(staleTimer);
+    document.removeEventListener("visibilitychange", onVisibility);
+    unsubscribeConnection();
+    unsubscribeStore();
+    controller.stop();
+  });
+
+  const selectedMetricHistory = computed(() => {
+    const nodeId = toValue(options.selectedNodeId);
+    // Reading `now` and `runtime` keeps the history in step with incoming flushes.
+    void runtime.value;
+    return nodeId ? store.getMetricHistory(nodeId) : {};
+  });
+
+  return {
+    runtime,
+    connectionState,
+    now,
+    selectedMetricHistory,
+    isNodeStale: (nodeId: string, thresholdMs = 30_000) => store.isNodeStale(nodeId, now.value, thresholdMs),
+    resync: () => controller.resync(),
+  };
+}
