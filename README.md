@@ -178,3 +178,19 @@ boilerplate — the conventions genuinely differ.
 `npm run check:generators` runs the generator and checks its output against the
 contract; it is part of `check:ci`. Regenerating over an existing module refuses
 rather than overwriting.
+
+## Backend
+
+The API lives in [boilplate-server](https://github.com/fredokim/boilplate-server),
+shared with the React and Next.js boilerplates.
+
+```bash
+npm run dev                # demo data, no backend needed
+npm run dev:server-mode    # proxies /api to a backend on 127.0.0.1:3001
+npm run check:contract     # this app's calls against the backend's published spec
+npm run contract:sync      # refresh contracts/openapi.json from a local checkout
+```
+
+`VITE_DATA_MODE` decides where data comes from, and a production build refuses
+mock mode. Every request path must start with `/api`, or the dev proxy will not
+forward it — see DEPLOYMENT.md.
