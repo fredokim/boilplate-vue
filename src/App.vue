@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AlertSnackbar from "@/components/molecules/AlertSnackbar.vue";
-import ConfirmDialog from "@/components/molecules/ConfirmDialog.vue";
-import CustomDialog from "@/components/molecules/CustomDialog.vue";
+import AlertSnackbar from "@/components/global/AlertSnackbar.vue";
+import ConfirmDialog from "@/components/global/ConfirmDialog.vue";
+import CustomDialog from "@/components/global/CustomDialog.vue";
 </script>
 
 <template>

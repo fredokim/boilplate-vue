@@ -1,15 +1,17 @@
 {
-  "extends": "./tsconfig.json", // ✅ 루트 설정 상속
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "noEmit": true,
+    "skipLibCheck": true,
 
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
 
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "scripts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "scripts"],
+  "exclude": ["src/**/*.stories.ts", "src/**/*.stories.tsx"]
 }

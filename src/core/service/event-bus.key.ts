@@ -1,4 +1,5 @@
 import type { InjectionKey } from "vue";
-import { EventBusService } from "./event-bus.service";
 
-export const EventBusKey: InjectionKey<EventBusService> = Symbol("EventBus");
+import type { AppEventBusService } from "./event-bus.service";
+
+export const EventBusKey: InjectionKey<AppEventBusService> = Symbol("EventBus");

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Card from "@/components/atom/Card.vue";
+import Card from "@/components/atomic/atoms/BaseCard.vue";
 
 const items = [
   { type: "error" },
@@ -19,7 +19,7 @@ const items = [
             class="alert-snackbar px-3 py-5 alert--basic"
             :class="[`alert--${item.type}`, 'text-white']"
           >
-            {{ `This is an ${item.type} alert — check it out!` }}
+            {{ `This is a ${item.type} alert.` }}
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@ const items = [
             class="alert-snackbar px-3 py-5 alert--filled"
             :class="[`alert--${item.type}`, 'text-white']"
           >
-            {{ `This is an ${item.type} alert — check it out!` }}
+            {{ `This is a ${item.type} alert.` }}
           </div>
         </div>
       </div>
@@ -47,12 +47,10 @@ const items = [
             class="alert-snackbar px-3 py-5 alert--outlined"
             :class="[`alert--${item.type}`, 'text-white']"
           >
-            {{ `This is an ${item.type} alert — check it out!` }}
+            {{ `This is a ${item.type} alert.` }}
           </div>
         </div>
       </div>
     </Card>
   </div>
 </template>
-
-<style lang="scss" scoped></style>
