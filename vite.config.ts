@@ -106,6 +106,17 @@ export default defineConfig({
         "src/**/*.stories.ts",
         "src/test/**",
       ],
+      // A ratchet, not an aspiration. Each number is the measured figure
+      // rounded down, so the gate says "do not go backwards" rather than
+      // naming a target nobody agreed to. Raise them when coverage rises;
+      // a threshold that has never been met is a threshold that gets
+      // deleted the first time it is inconvenient.
+      thresholds: {
+        statements: 62,
+        branches: 52,
+        functions: 57,
+        lines: 65,
+      },
     },
     exclude: ["tests/performance/**"],
   },
