@@ -135,3 +135,27 @@ API load testing uses k6, which must be installed separately:
 ```bash
 k6 run tests/performance/api-smoke.k6.js
 ```
+
+## Design tokens
+
+Colours, spacing, radii, and shadows come from `tokens/tokens.json`, which the
+React, Next.js, and Vue boilerplates share. `src/core/theme/tokens.ts` and
+`src/assets/scss/generated/` are generated from it; editing them is undone by
+the next build.
+
+```bash
+# after editing tokens/tokens.json
+npm run tokens:build
+```
+
+`npm run check:tokens` renders the outputs and compares them against what is
+committed, failing with the file, line, and both values when they differ. It
+runs as part of `check:ci`. It compares rather than regenerating on purpose: a
+check that rewrites the file it is checking cannot fail.
+
+Light and dark themes are both defined in the source and emitted as
+`:root[data-theme]` blocks, as before.
+
+`TOKEN_INVENTORY.md` in the React repository records what the three sets looked
+like before they were merged, including two tokens that were deliberately not
+merged.
