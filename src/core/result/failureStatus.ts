@@ -1,3 +1,4 @@
+import { ASLEEP_CODE } from "@core/api/server-wake";
 import { isTypedApiError, type TypedApiError } from "@core/api/api-error";
 
 /**
@@ -16,6 +17,10 @@ import { isTypedApiError, type TypedApiError } from "@core/api/api-error";
 export type FailureKey =
   | "offline"
   | "unreachable"
+  // The host refused to wake a sleeping instance. Distinct from `unreachable`
+  // because it resolves on its own in about a minute, and saying "cannot reach
+  // the server" sends the reader to check a status page for nothing.
+  | "waking"
   | "timeout"
   | "unauthorized"
   | "forbidden"
@@ -51,6 +56,12 @@ const STATUS: Record<FailureKey, FailureStatus> = {
   unreachable: {
     title: "Cannot reach the server",
     detail: "The connection was refused or dropped. The server may be restarting.",
+    tone: "warning",
+    retryable: true,
+  },
+  waking: {
+    title: "Server is starting",
+    detail: "It was idle and is coming back. This usually takes under a minute.",
     tone: "warning",
     retryable: true,
   },
@@ -125,6 +136,11 @@ function isOffline(): boolean {
  */
 export function failureKeyOf(error: TypedApiError): FailureKey {
   const status = error.context.status;
+
+  // Read before the kind. A refusal to wake a sleeping instance arrives as an
+  // HTTP status like any other, but it is not a fault: it is the one failure
+  // here that fixes itself if the reader simply waits.
+  if (error.context.code === ASLEEP_CODE) return "waking";
 
   switch (error.kind) {
     case "network":

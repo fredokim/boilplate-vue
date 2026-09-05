@@ -1,3 +1,4 @@
+import { serverWakeGate } from "@core/api/server-wake";
 import { computed, onScopeDispose, shallowRef, toValue, watch, type MaybeRefOrGetter } from "vue";
 import { watchForIdle } from "@core/realtime/idleSuspension";
 
@@ -31,7 +32,13 @@ export function useTopologyRealtime<
     knownNodeIds: graph.nodes.map((node) => node.id),
     knownEdgeIds: graph.edges.map((edge) => edge.id),
   });
-  const controller = new TopologyRealtimeController({ topologyId, transport, store, loadSnapshot });
+  const controller = new TopologyRealtimeController({
+    topologyId,
+    transport,
+    store,
+    loadSnapshot,
+    waitForServer: () => serverWakeGate.wait(),
+  });
 
   const runtime = shallowRef(store.getSnapshot());
   // The controller, not the transport. The transport reports only what its

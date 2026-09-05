@@ -6,6 +6,7 @@ import { describeFailure, failureKeyOf, failureStatus, type FailureKey } from ".
 const ALL: FailureKey[] = [
   "offline",
   "unreachable",
+  "waking",
   "timeout",
   "unauthorized",
   "forbidden",
