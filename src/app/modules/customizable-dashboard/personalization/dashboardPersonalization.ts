@@ -1,4 +1,23 @@
+import { toRaw } from "vue";
+
 import type { Dashboard, DashboardWidget } from "../model/dashboardWidget";
+
+/**
+ * structuredClone, minus the Proxy.
+ *
+ * Everything that reaches this module from a component is a reactive proxy --
+ * a prop, a ref's value -- and structuredClone cannot clone one. It throws
+ * DataCloneError, nothing catches it, and the dashboard renders nothing at
+ * all: the route was blank in a browser while every unit test passed, because
+ * the tests call these functions with plain objects.
+ *
+ * `toRaw` hands back the underlying object, whose nested values are plain, so
+ * one unwrap at the point of cloning covers the tree. The React boilerplate
+ * this was ported from needs none of it, which is exactly why it was missing.
+ */
+function clone<T>(value: T): T {
+  return structuredClone(toRaw(value));
+}
 
 export const DASHBOARD_PERSONALIZATION_VERSION = 1 as const;
 
@@ -54,11 +73,11 @@ export function applyDashboardPersonalization(
   const hiddenIds = new Set(override.hiddenWidgetIds);
   const baseWidgets = baseDashboard.widgets
     .filter((widget) => !hiddenIds.has(widget.id))
-    .map((widget) => structuredClone(override.widgetOverrides[widget.id] ?? widget));
+    .map((widget) => clone(override.widgetOverrides[widget.id] ?? widget));
   return {
-    ...structuredClone(baseDashboard),
-    globalFilters: structuredClone(override.globalFilters ?? baseDashboard.globalFilters),
-    widgets: [...baseWidgets, ...structuredClone(override.addedWidgets)],
+    ...clone(baseDashboard),
+    globalFilters: clone(override.globalFilters ?? baseDashboard.globalFilters),
+    widgets: [...baseWidgets, ...clone(override.addedWidgets)],
   };
 }
 
@@ -73,14 +92,14 @@ export function deriveDashboardPersonalization(
 
   personalizedDashboard.widgets.forEach((widget) => {
     const baseWidget = baseById.get(widget.id);
-    if (!baseWidget) addedWidgets.push(structuredClone(widget));
-    else if (!sameValue(baseWidget, widget)) widgetOverrides[widget.id] = structuredClone(widget);
+    if (!baseWidget) addedWidgets.push(clone(widget));
+    else if (!sameValue(baseWidget, widget)) widgetOverrides[widget.id] = clone(widget);
   });
 
   return {
     ...(sameValue(baseDashboard.globalFilters, personalizedDashboard.globalFilters)
       ? {}
-      : { globalFilters: structuredClone(personalizedDashboard.globalFilters) }),
+      : { globalFilters: clone(personalizedDashboard.globalFilters) }),
     hiddenWidgetIds: baseDashboard.widgets
       .filter((widget) => !personalizedById.has(widget.id))
       .map((widget) => widget.id),

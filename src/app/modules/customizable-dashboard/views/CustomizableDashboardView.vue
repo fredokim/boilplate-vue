@@ -109,7 +109,7 @@ function onImportFile(event: Event) {
           <h1 class="m-0 text-2xl font-black text-slate-900">Customizable Dashboard</h1>
           <BaseBadge v-if="isEditing" tone="info">Editing draft</BaseBadge>
         </div>
-        <p class="mt-2 text-sm text-slate-500">
+        <p class="mt-2 text-sm text-slate-600">
           {{ isEditing ? "Changes remain in a draft until you save." : "View mode prevents accidental layout changes." }}
         </p>
       </div>
@@ -260,7 +260,7 @@ function onImportFile(event: Event) {
     <section v-if="isEditing && dashboard.widgets.length > 0" class="dashboard-settings" aria-label="Widget settings">
       <div>
         <h2 class="m-0 text-lg font-bold text-slate-900">Widget settings</h2>
-        <p class="mb-0 mt-1 text-sm text-slate-500">Each widget definition supplies its own editor.</p>
+        <p class="mb-0 mt-1 text-sm text-slate-600">Each widget definition supplies its own editor.</p>
       </div>
       <div class="dashboard-settings__grid">
         <div v-for="widget in dashboard.widgets" :key="widget.id" class="dashboard-settings__item">

@@ -107,7 +107,7 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
         <h1 class="m-0 text-2xl font-black text-slate-900">Topology Editor</h1>
-        <p class="mt-2 text-sm text-slate-500">
+        <p class="mt-2 text-sm text-slate-600">
           Build a draft topology. Routing and network policy validation remain external responsibilities.
         </p>
       </div>
@@ -135,7 +135,7 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
       <BaseCard>
         <template #header>
           <h2 class="m-0 text-lg font-bold text-slate-900">Device palette</h2>
-          <p class="m-0 mt-1 text-sm text-slate-500">Choose a type, then click the canvas.</p>
+          <p class="m-0 mt-1 text-sm text-slate-600">Choose a type, then click the canvas.</p>
         </template>
         <div class="grid gap-2">
           <button
@@ -155,11 +155,11 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
             <strong class="text-sm text-slate-900">{{ getNetworkNodePresentation(type).typeLabel }}</strong>
           </button>
         </div>
-        <p class="mb-0 mt-4 text-xs text-slate-500">
+        <p class="mb-0 mt-4 text-xs text-slate-600">
           Drag nodes to move them. Drag from a node handle to another node to connect.
         </p>
         <div v-if="graph.groups?.length" class="mt-4 grid gap-2 border-t border-slate-200 pt-4">
-          <strong class="text-xs text-slate-500">Groups</strong>
+          <strong class="text-xs text-slate-600">Groups</strong>
           <button
             v-for="group in graph.groups"
             :key="group.id"
@@ -197,7 +197,7 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Selection</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">Edit node metadata or remove the selected element.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">Edit node metadata or remove the selected element.</p>
           </template>
           <div v-if="selectedNode" class="grid gap-4">
             <label class="grid gap-2 text-sm font-semibold text-slate-900">
@@ -208,12 +208,12 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
               Description
               <BaseInput v-model="nodeDescription" aria-label="Description" @blur="commitNodeMetadata" />
             </label>
-            <p class="m-0 text-xs text-slate-500">{{ selectedNode.id }} · {{ selectedNode.type }}</p>
+            <p class="m-0 text-xs text-slate-600">{{ selectedNode.id }} · {{ selectedNode.type }}</p>
             <BaseButton tone="error" @click="emit('deleteSelection')">Delete node</BaseButton>
           </div>
           <div v-else-if="selectedEdge" class="grid gap-3 text-sm">
             <p class="m-0 text-slate-900">{{ selectedEdge.sourceNodeId }} → {{ selectedEdge.targetNodeId }}</p>
-            <p class="m-0 text-xs text-slate-500">
+            <p class="m-0 text-xs text-slate-600">
               {{ selectedEdge.sourcePortId ?? "default" }} → {{ selectedEdge.targetPortId ?? "default" }}
             </p>
             <BaseButton tone="error" @click="emit('deleteSelection')">Delete edge</BaseButton>
@@ -228,26 +228,26 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
             </BaseButton>
             <BaseButton tone="error" @click="emit('deleteSelection')">Ungroup</BaseButton>
           </div>
-          <p v-else class="m-0 text-sm text-slate-500">Select a node, edge, or group.</p>
+          <p v-else class="m-0 text-sm text-slate-600">Select a node, edge, or group.</p>
         </BaseCard>
 
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Validation</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">Structural checks plus external validation results.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">Structural checks plus external validation results.</p>
           </template>
           <ul v-if="validationErrors.length" class="m-0 grid gap-2 pl-5 text-sm text-red-700">
             <li v-for="error in validationErrors" :key="`${error.code}-${error.targetId}`">
               {{ error.message }} ({{ error.targetId }})
             </li>
           </ul>
-          <p v-else class="m-0 text-sm text-slate-500">No validation errors.</p>
+          <p v-else class="m-0 text-sm text-slate-600">No validation errors.</p>
         </BaseCard>
 
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Import / Export</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">Versioned graph JSON. Import stays in draft until Save.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">Versioned graph JSON. Import stays in draft until Save.</p>
           </template>
           <div class="grid gap-2">
             <BaseTextarea v-model="transferJson" aria-label="Graph transfer JSON" :rows="6" />
@@ -263,7 +263,7 @@ const paletteTypes: readonly NetworkNodeType[] = ["router", "firewall", "server"
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Performance debug</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">Development baseline signals.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">Development baseline signals.</p>
           </template>
           <dl class="m-0 grid grid-cols-2 gap-2 text-xs">
             <dt>Nodes</dt>

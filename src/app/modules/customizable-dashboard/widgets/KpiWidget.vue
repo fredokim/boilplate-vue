@@ -20,7 +20,7 @@ const isEmpty = computed(() => query.data.value?.value === undefined);
       <div class="mt-auto">
         <p class="m-0 text-xs font-semibold text-slate-500">{{ query.data.value?.label }}</p>
         <p class="mb-0 mt-1 text-3xl font-black text-slate-900">{{ query.data.value?.value?.toLocaleString() }}</p>
-        <p v-if="query.data.value?.trend" class="mb-0 mt-2 text-sm font-semibold text-emerald-600">
+        <p v-if="query.data.value?.trend" class="mb-0 mt-2 text-sm font-semibold text-success">
           {{ query.data.value.trend }}
         </p>
       </div>

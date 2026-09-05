@@ -137,7 +137,7 @@ async function useDemoLogin() {
         </div>
 
         <div class="grid gap-2 border-t border-slate-200 pt-4">
-          <p class="m-0 text-center text-xs font-semibold uppercase text-slate-400">
+          <p class="m-0 text-center text-xs font-semibold uppercase text-slate-600">
             Social login extension
           </p>
           <BaseButton

@@ -148,7 +148,7 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
         <h1 class="m-0 text-2xl font-black text-slate-900">Interactive Topology Explorer</h1>
-        <p class="mt-2 text-sm text-slate-500">
+        <p class="mt-2 text-sm text-slate-600">
           Search equipment, inspect metadata, and visualize routes calculated by an external engine.
         </p>
       </div>
@@ -167,7 +167,7 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
     <BaseCard>
       <template #header>
         <h2 class="m-0 text-lg font-bold text-slate-900">Runtime health</h2>
-        <p class="m-0 mt-1 text-sm text-slate-500">
+        <p class="m-0 mt-1 text-sm text-slate-600">
           Incremental counters from the realtime state store; filters dim nodes without removing topology.
         </p>
       </template>
@@ -179,7 +179,7 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
         >
           <strong class="capitalize">{{ status }}</strong> {{ runtime.summary[status] }}
         </span>
-        <label class="ml-auto grid gap-1 text-xs font-semibold text-slate-500">
+        <label class="ml-auto grid gap-1 text-xs font-semibold text-slate-600">
           Runtime filter
           <BaseSelect v-model="runtimeFilter" :options="runtimeFilterOptions" size="sm" aria-label="Runtime filter" />
         </label>
@@ -189,7 +189,7 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
     <BaseCard>
       <template #header>
         <h2 class="m-0 text-lg font-bold text-slate-900">Explore topology</h2>
-        <p class="m-0 mt-1 text-sm text-slate-500">Search by node name, id, or a primitive metadata value.</p>
+        <p class="m-0 mt-1 text-sm text-slate-600">Search by node name, id, or a primitive metadata value.</p>
       </template>
       <div class="grid gap-4 xl:grid-cols-[minmax(240px,1fr)_repeat(2,minmax(180px,0.7fr))_auto] xl:items-end">
         <div class="relative">
@@ -215,9 +215,9 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
               "
             >
               <strong class="block text-slate-900">{{ node.label }}</strong>
-              <span class="text-xs text-slate-500">{{ node.id }}</span>
+              <span class="text-xs text-slate-600">{{ node.id }}</span>
             </button>
-            <p v-if="!matchingNodes.length" class="m-0 px-3 py-2 text-sm text-slate-500">No matching nodes.</p>
+            <p v-if="!matchingNodes.length" class="m-0 px-3 py-2 text-sm text-slate-600">No matching nodes.</p>
           </div>
         </div>
         <label class="grid gap-2 text-sm font-semibold text-slate-900">
@@ -303,7 +303,7 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Route detail</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">The ordered path returned by the route service.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">The ordered path returned by the route service.</p>
           </template>
           <ol v-if="interaction.activeRoute" class="m-0 grid list-none gap-2 p-0" aria-label="Ordered route">
             <li v-for="(node, index) in routeNodes" :key="node?.id ?? index">
@@ -318,29 +318,29 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
                 </span>
                 <span>
                   <strong class="block text-sm text-slate-900">{{ node.label }}</strong>
-                  <small class="text-slate-500">{{ getNodePresentation(node.type).typeLabel }}</small>
+                  <small class="text-slate-600">{{ getNodePresentation(node.type).typeLabel }}</small>
                 </span>
               </button>
             </li>
           </ol>
-          <p v-else class="m-0 text-sm text-slate-500">Search for a route to see its ordered path.</p>
+          <p v-else class="m-0 text-sm text-slate-600">Search for a route to see its ordered path.</p>
         </BaseCard>
 
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Node metadata</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">Selection remains independent from the active route.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">Selection remains independent from the active route.</p>
           </template>
           <template v-if="selectedNode">
             <dl class="m-0 grid gap-3 text-sm">
               <div v-for="(value, key) in nodeMetadataEntries" :key="key">
-                <dt class="font-semibold capitalize text-slate-500">{{ key }}</dt>
+                <dt class="font-semibold capitalize text-slate-600">{{ key }}</dt>
                 <dd class="m-0 mt-1 break-words text-slate-900">{{ formatMetadataValue(value) }}</dd>
               </div>
             </dl>
             <div
               v-if="Object.keys(selectedMetricHistory).length"
-              class="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-500"
+              class="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-600"
             >
               <p v-for="(values, name) in selectedMetricHistory" :key="name" class="m-0 mt-1">
                 <strong>{{ name }}</strong
@@ -348,33 +348,33 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
               </p>
             </div>
           </template>
-          <p v-else class="m-0 text-sm text-slate-500">No node selected.</p>
+          <p v-else class="m-0 text-sm text-slate-600">No node selected.</p>
         </BaseCard>
 
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Edge metadata</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">Hover a connection to inspect it.</p>
+            <p class="m-0 mt-1 text-sm text-slate-600">Hover a connection to inspect it.</p>
           </template>
           <dl v-if="hoveredEdge" class="m-0 grid gap-3 text-sm">
             <div v-for="(value, key) in edgeMetadataEntries" :key="key">
-              <dt class="font-semibold capitalize text-slate-500">{{ key }}</dt>
+              <dt class="font-semibold capitalize text-slate-600">{{ key }}</dt>
               <dd class="m-0 mt-1 break-words text-slate-900">{{ formatMetadataValue(value) }}</dd>
             </div>
           </dl>
-          <p v-else class="m-0 text-sm text-slate-500">No edge hovered.</p>
+          <p v-else class="m-0 text-sm text-slate-600">No edge hovered.</p>
         </BaseCard>
 
         <BaseCard>
           <template #header>
             <h2 class="m-0 text-lg font-bold text-slate-900">Realtime debug</h2>
-            <p class="m-0 mt-1 text-sm text-slate-500">
+            <p class="m-0 mt-1 text-sm text-slate-600">
               Development telemetry for buffering, ordering, and reconnect behavior.
             </p>
           </template>
           <dl class="m-0 grid gap-3 text-sm">
             <div v-for="(value, key) in debugEntries" :key="key">
-              <dt class="font-semibold capitalize text-slate-500">{{ key }}</dt>
+              <dt class="font-semibold capitalize text-slate-600">{{ key }}</dt>
               <dd class="m-0 mt-1 break-words text-slate-900">{{ value }}</dd>
             </div>
           </dl>

@@ -13,7 +13,13 @@ const { isSidebar, isHeader } = useLayoutSettings();
     <div class="layout-body">
       <AppSideBar v-if="isSidebar" class="app-sidebar" />
 
-      <main class="main-content">
+      <!--
+        `tabindex="0"` because .main-content sets overflow-y: auto. A region
+        that scrolls but cannot take focus is unreachable with a keyboard:
+        there is nothing to put the caret on, so the arrow keys have nothing to
+        scroll. It is announced as <main>, so the extra tab stop has a name.
+      -->
+      <main class="main-content" tabindex="0">
         <slot />
       </main>
     </div>

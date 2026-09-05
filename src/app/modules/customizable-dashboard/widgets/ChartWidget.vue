@@ -96,7 +96,7 @@ function filterOthers() {
               :y="tick.y + 4"
               font-size="11"
               text-anchor="end"
-              fill="#64748b"
+              fill="#475569"
             >
               {{ tick.value }}
             </text>
@@ -119,7 +119,7 @@ function filterOthers() {
             :y="VIEW.height - 10"
             font-size="11"
             text-anchor="middle"
-            fill="#64748b"
+            fill="#475569"
           >
             {{ bar.label }}
           </text>

@@ -19,7 +19,7 @@ defineProps<{
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
         <h1 class="m-0 text-2xl font-black text-slate-900">Live Streaming Lab</h1>
-        <p class="mt-2 text-sm text-slate-500">A baseline for measuring streaming and realtime rendering behavior.</p>
+        <p class="mt-2 text-sm text-slate-600">A baseline for measuring streaming and realtime rendering behavior.</p>
       </div>
     </div>
     <div class="live-experience">

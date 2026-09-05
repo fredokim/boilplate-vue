@@ -180,7 +180,32 @@ defineExpose({
         <GraphNodeCard :data="nodeProps.data" :selected="nodeProps.selected" />
       </template>
       <Background :variant="BackgroundVariant.Dots" color="#cbd5e1" :gap="20" :size="1" />
-      <Controls :show-interactive="false" />
+      <!--
+        Vue Flow renders its zoom and fit buttons with an icon and no text, so
+        a screen reader announces three unlabelled buttons. React Flow labels
+        its own; this one does not, and the slots replace the icon rather than
+        wrap it, so the label is added beside a redrawn icon.
+      -->
+      <Controls :show-interactive="false">
+        <template #control-zoom-in>
+          <span class="graph-canvas__control-label">Zoom in</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </template>
+        <template #control-zoom-out>
+          <span class="graph-canvas__control-label">Zoom out</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M5 12h14" />
+          </svg>
+        </template>
+        <template #control-fit-view>
+          <span class="graph-canvas__control-label">Fit the whole topology in view</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+          </svg>
+        </template>
+      </Controls>
     </VueFlow>
   </div>
 </template>

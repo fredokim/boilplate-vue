@@ -24,10 +24,10 @@ export const darkTheme = {
 };
 
 export const lightTheme = {
-  primary: "#4880ff",
+  primary: "#2563eb",
   secondary: "#6c5dd3",
   accent: "#ff7f5c",
-  success: "#10b981",
+  success: "#15803d",
   error: "#ef4444",
   warning: "#f59e0b",
   info: "#3b82f6",
