@@ -7,6 +7,7 @@
     "generate-theme-scss": "tsx scripts/generate-theme-scss.ts",
     "tokens:build": "tsx scripts/build-tokens.ts && npm run generate-theme-scss",
     "check:tokens": "tsx scripts/check-tokens.ts",
+    "check:docs": "tsx scripts/check-docs.ts",
     "generate": "tsx scripts/generate.ts",
     "generate:contract": "tsx scripts/generate-contract.ts",
     "generate:form": "tsx scripts/generate-form.ts",
@@ -41,7 +42,7 @@
     "check:generators": "tsx scripts/check-generators.ts",
     "check:bundle": "tsx scripts/check-bundle-budget.ts",
     "check:deps": "tsx scripts/check-dependency-size.ts",
-    "check:ci": "npm run check:tokens && npm run generate-theme-scss && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
+    "check:ci": "npm run check:tokens && npm run check:docs && npm run generate-theme-scss && npm run lint && npm run typecheck && npm run test && npm run check:contract && npm run check:ai && npm run check:automation && npm run check:generators && npm run check:deps && npm run build && npm run check:bundle && npm run build-storybook",
     "lint": "eslint \"{src,scripts,.storybook}/**/*.{js,ts,vue}\" --max-warnings=0",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
