@@ -5,12 +5,16 @@ import { useVirtualizer } from "@tanstack/vue-virtual";
 import ChatProfileImage from "./ChatProfileImage.vue";
 import type { ChatMessage } from "../model/chatMessage";
 import type { ChatConnectionState, ChatDiagnostics } from "../realtime/types";
+import { connectionStatus } from "@core/realtime/connectionStatus";
 
 const props = defineProps<{
   connectionState: ChatConnectionState;
   messages: readonly ChatMessage[];
   diagnostics: ChatDiagnostics;
 }>();
+
+// The state names the code uses are not the words to show a reader.
+const status = computed(() => connectionStatus(props.connectionState));
 
 const timeFormatter = new Intl.DateTimeFormat("en", { hour: "2-digit", minute: "2-digit" });
 
@@ -79,7 +83,12 @@ onScopeDispose(() => {
           Buffered, de-duplicated, and capped at {{ messages.length }} shown
         </p>
       </div>
-      <span class="live-chat__status" :class="`live-chat__status--${connectionState}`">{{ connectionState }}</span>
+      <span
+        class="live-chat__status"
+        :class="`live-chat__status--${status.tone}`"
+        role="status"
+        :title="status.detail"
+      >{{ status.label }}</span>
     </header>
 
     <div class="live-chat__viewport">
@@ -130,7 +139,7 @@ onScopeDispose(() => {
       <span>Shown: {{ messages.length }}</span>
       <span>Rendered: {{ virtualRows.length }}</span>
       <span>Dropped: {{ diagnostics.droppedByCapacity + diagnostics.droppedTooOld }}</span>
-      <span>Connection: {{ connectionState }}</span>
+      <span>Connection: {{ status.label }}</span>
     </footer>
   </section>
 </template>

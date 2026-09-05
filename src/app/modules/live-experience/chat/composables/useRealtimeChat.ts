@@ -41,14 +41,15 @@ export function useRealtimeChat({ roomId, store: storeOptions, transport }: UseR
    * traffic, so a forgotten tab keeps a free instance awake all night for the
    * same cost as one in use.
    *
-   * `stop()` and `start()` rather than a new pair of methods: stop already
-   * disconnects and blocks the reconnect backoff, and start rejoins from the
+   * `suspend()` and `resume()` rather than stop and start: stop already
+   * disconnects and blocks the reconnect backoff, but lands on `disconnected`,
+   * the state that means a fault. Suspending says which happened; resuming rejoins from the
    * last applied sequence, so a returning reader catches up rather than
    * reloading.
    */
   const stopIdleWatch = watchForIdle({
-    onIdle: () => controller.stop(),
-    onResume: () => void controller.start(),
+    onIdle: () => controller.suspend(),
+    onResume: () => void controller.resume(),
   });
 
   onScopeDispose(() => {

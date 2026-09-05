@@ -81,18 +81,23 @@
   text-transform: capitalize;
 }
 
-.live-chat__status--connected {
+/**
+ * By tone, not by state. Seven states, three things a reader needs to know: it
+ * is fine, it is working on it, or it is broken. Keying to the state meant a
+ * new state arrived unstyled, and a paused connection -- which is fine -- would
+ * have inherited the colour of a failure.
+ */
+.live-chat__status--ok {
   background: #dcfce7;
   color: #15803d;
 }
 
-.live-chat__status--connecting {
+.live-chat__status--busy {
   background: #fef3c7;
   color: #854d0e;
 }
 
-.live-chat__status--error,
-.live-chat__status--disconnected {
+.live-chat__status--bad {
   background: #fee2e2;
   color: #b91c1c;
 }

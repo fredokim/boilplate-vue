@@ -19,7 +19,7 @@ describe("LiveExperienceContainer (Vue)", () => {
     expect(wrapper.text()).toContain("Waiting for the first message…");
     const debug = wrapper.get('[aria-label="Chat debug information"]').text();
     expect(debug).toContain("Shown: 0");
-    expect(debug).toContain("Connection: connecting");
+    expect(debug).toContain("Connection: Connecting");
 
     wrapper.unmount();
   });

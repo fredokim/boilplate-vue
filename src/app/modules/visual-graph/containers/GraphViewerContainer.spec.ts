@@ -38,7 +38,7 @@ describe("GraphViewerContainer (Vue)", () => {
     const wrapper = mountContainer();
     await flushPromises();
 
-    expect(wrapper.find('[role="status"]').text()).toContain("Realtime: connected");
+    expect(wrapper.find('[role="status"]').text()).toContain("Realtime: Live");
     expect(wrapper.find('[data-testid="graph-canvas"]').attributes("data-editable")).toBe("false");
 
     wrapper.unmount();

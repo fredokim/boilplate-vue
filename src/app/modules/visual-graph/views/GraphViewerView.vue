@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="TNodeType extends string, TNodeMetadata extends GraphMetadata, TEdgeMetadata extends GraphMetadata">
+import { connectionStatus } from "@core/realtime/connectionStatus";
 import { computed, onScopeDispose, ref, watch } from "vue";
 
 import { BaseButton, BaseCard, BaseInput, BaseSelect } from "@/components/atomic";
@@ -20,6 +21,17 @@ const props = defineProps<{
   isNodeStale: (nodeId: string, thresholdMs?: number) => boolean;
   selectedMetricHistory: Record<string, number[]>;
 }>();
+
+/**
+ * Three tones rather than "connected or not". A paused connection is working
+ * as intended and must not be dressed as a warning, which is what every state
+ * but `connected` used to get.
+ */
+const TONE_CLASS = {
+  ok: "bg-green-100 text-green-800",
+  busy: "bg-amber-100 text-amber-900",
+  bad: "bg-red-100 text-red-900",
+} as const;
 
 const emit = defineEmits<{
   nodeSelect: [nodeId: string | null];
@@ -155,10 +167,11 @@ const edgeMetadataEntries = computed<Record<string, unknown>>(() => {
       <div class="flex items-center gap-3">
         <span
           class="rounded-full px-3 py-1 text-xs font-bold"
-          :class="connectionState === 'connected' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-900'"
+          :class="TONE_CLASS[connectionStatus(connectionState).tone]"
+          :title="connectionStatus(connectionState).detail"
           role="status"
         >
-          Realtime: {{ connectionState }}
+          Realtime: {{ connectionStatus(connectionState).label }}
         </span>
         <BaseButton @click="emit('edit')">Edit topology</BaseButton>
       </div>
