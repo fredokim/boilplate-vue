@@ -1,3 +1,4 @@
+import { ASLEEP_CODE, ASLEEP_STATUS, serverWakeGate } from "./server-wake";
 import axios, { AxiosHeaders } from "axios";
 import type { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 
@@ -38,7 +39,12 @@ export class TypedHttpClient {
       timeout: options.timeout ?? 10_000,
     });
 
-    this.client.interceptors.request.use((config) => {
+    this.client.interceptors.request.use(async (config) => {
+      // Free of charge unless the server is known to be asleep, in which case
+      // this waits for the one probe rather than adding another request to a
+      // pile the platform is already refusing.
+      await serverWakeGate.wait();
+
       const token = this.accessTokenProvider?.();
 
       if (token) {
@@ -210,6 +216,19 @@ export class TypedHttpClient {
       // other 401 have to reach into an untyped blob to do it.
       const body = error.response.data as { error?: { code?: string } } | undefined;
 
+      /**
+       * A 429 with no envelope did not come from the API. This app's own 429s
+       * -- the login throttle and the chat rate limit -- are JSON like every
+       * other answer, so a body that is not one means the host refused to wake
+       * a sleeping instance. The kind stays `http_status`, which is what it is;
+       * the code is what tells the reader's message apart.
+       */
+      const asleep =
+        error.response.status === ASLEEP_STATUS &&
+        (typeof error.response.data !== "object" || error.response.data === null);
+
+      if (asleep) serverWakeGate.reportAsleep();
+
       return new TypedApiError(
         "backend",
         "http_status",
@@ -217,6 +236,7 @@ export class TypedHttpClient {
         {
           ...context,
           status: error.response.status,
+          ...(asleep ? { code: ASLEEP_CODE } : {}),
           ...(body?.error?.code === undefined ? {} : { code: body.error.code }),
           raw: error.response.data,
           cause: error,

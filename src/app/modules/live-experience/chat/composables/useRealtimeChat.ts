@@ -1,3 +1,4 @@
+import { serverWakeGate } from "@core/api/server-wake";
 import { computed, onScopeDispose, ref, shallowRef } from "vue";
 
 import { watchForIdle } from "@core/realtime/idleSuspension";
@@ -19,7 +20,12 @@ type UseRealtimeChatOptions = {
  */
 export function useRealtimeChat({ roomId, store: storeOptions, transport }: UseRealtimeChatOptions) {
   const store = new ChatStore(storeOptions);
-  const controller = new ChatController({ roomId, transport, store });
+  const controller = new ChatController({
+    roomId,
+    transport,
+    store,
+    waitForServer: () => serverWakeGate.wait(),
+  });
 
   const snapshot = shallowRef(store.getSnapshot());
   // The controller, not the transport. The transport reports only what its
