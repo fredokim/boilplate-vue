@@ -34,13 +34,17 @@ export function useTopologyRealtime<
   const controller = new TopologyRealtimeController({ topologyId, transport, store, loadSnapshot });
 
   const runtime = shallowRef(store.getSnapshot());
-  const connectionState = shallowRef(transport.getConnectionState());
+  // The controller, not the transport. The transport reports only what its
+  // socket did, so it can never say `suspended` (the controller decides that)
+  // or `reconnecting` (which exists only between a drop and the next attempt).
+  // Reading it here is what made an idle release show up as a failure.
+  const connectionState = shallowRef(controller.getConnectionState());
   const now = shallowRef(0);
 
   const unsubscribeStore = store.subscribe(() => {
     runtime.value = store.getSnapshot();
   });
-  const unsubscribeConnection = transport.subscribeConnection((state) => {
+  const unsubscribeConnection = controller.subscribeConnection((state) => {
     connectionState.value = state;
   });
 

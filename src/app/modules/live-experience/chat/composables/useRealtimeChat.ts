@@ -22,12 +22,16 @@ export function useRealtimeChat({ roomId, store: storeOptions, transport }: UseR
   const controller = new ChatController({ roomId, transport, store });
 
   const snapshot = shallowRef(store.getSnapshot());
-  const connectionState = ref<ChatConnectionState>(transport.getConnectionState());
+  // The controller, not the transport. The transport reports only what its
+  // socket did, so it can never say `suspended` (the controller decides that)
+  // or `reconnecting` (which exists only between a drop and the next attempt).
+  // Reading it here is what made an idle release show up as a failure.
+  const connectionState = ref<ChatConnectionState>(controller.getConnectionState());
 
   const unsubscribeStore = store.subscribe(() => {
     snapshot.value = store.getSnapshot();
   });
-  const unsubscribeConnection = transport.subscribeConnection((state) => {
+  const unsubscribeConnection = controller.subscribeConnection((state) => {
     connectionState.value = state;
   });
 
