@@ -73,7 +73,7 @@ function filterOthers() {
 <template>
   <div class="flex h-full flex-col">
     <p class="m-0 text-sm font-bold text-slate-900">{{ widget.config.title }}</p>
-    <WidgetDataBoundary :error="query.error.value" :is-empty="points.length === 0" :is-pending="query.isPending.value">
+    <WidgetDataBoundary @retry="() => query.refresh()" :error="query.error.value" :is-empty="points.length === 0" :is-pending="query.isPending.value">
       <div
         class="dashboard-chart mt-3 min-h-0 flex-1"
         :aria-label="`${widget.config.title} ${widget.config.chartType} chart`"

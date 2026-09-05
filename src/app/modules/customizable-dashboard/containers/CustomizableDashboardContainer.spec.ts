@@ -101,7 +101,11 @@ describe("CustomizableDashboardContainer (Vue)", () => {
     await flushPromises();
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Widget data unavailable");
+    // A plain Error carries no classification, so it lands on the generic
+    // case -- and still gets a sentence rather than the thrown message,
+    // which is written for whoever is reading a stack trace.
+    expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.text()).not.toContain("Dashboard data is unavailable.");
     wrapper.unmount();
   });
 });

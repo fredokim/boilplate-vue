@@ -41,7 +41,7 @@ function filterDashboard(event: string) {
 <template>
   <div class="flex h-full flex-col">
     <p class="m-0 text-sm font-bold text-slate-900">{{ widget.config.title }}</p>
-    <WidgetDataBoundary :error="query.error.value" :is-empty="rows.length === 0" :is-pending="query.isPending.value">
+    <WidgetDataBoundary @retry="() => query.refresh()" :error="query.error.value" :is-empty="rows.length === 0" :is-pending="query.isPending.value">
       <div class="mt-3">
         <div class="dashboard-virtual-table__header text-xs text-slate-500">
           <strong v-for="column in query.data.value?.columns" :key="column.key">{{ column.label }}</strong>
