@@ -35,3 +35,11 @@ figma-contact-sheet.png
 coverage/
 .lighthouseci/
 reports/
+
+# Real values never enter the repository; only .env.example is tracked. `*.local`
+# above covers Vite's .env.local and nothing else — .env is what `.env.example`
+# tells a reader to create, and it is where a secret ends up the first time one
+# is needed.
+.env
+.env.*
+!.env.example
