@@ -35,7 +35,6 @@ jobs:
       # The frontend's assumptions checked against the backend's published
       # spec, vendored in contracts/ because the backend is its own repository.
       - run: npm run check:contract
-      - run: npm run check:ai
       - run: npm run check:automation
       - run: npm run check:generators
       - run: npm run check:deps

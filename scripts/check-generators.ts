@@ -3,7 +3,7 @@ import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 /**
- * Runs the feature generator and checks its output against FEATURE_CONTRACT.md.
+ * Runs the feature generator and checks its output against docs/development/FEATURE_CONTRACT.md.
  *
  * The existing automation check asserted that four generator *files existed*.
  * It never ran one, and generate-feature.ts — the only generator that produces
@@ -97,8 +97,8 @@ cleanup();
 
 if (failures.length > 0) {
   console.error(failures.map((failure) => `- ${failure}`).join("\n"));
-  console.error("\nSee FEATURE_CONTRACT.md for what a generated module must contain.");
+  console.error("\nSee docs/development/FEATURE_CONTRACT.md for what a generated module must contain.");
   process.exit(1);
 }
 
-console.log("[generators] Generated modules match FEATURE_CONTRACT.md.");
+console.log("[generators] Generated modules match docs/development/FEATURE_CONTRACT.md.");
