@@ -1,5 +1,5 @@
 import type { RealtimeConnectionState, RuntimeSnapshotProvider } from "./types";
-import type { TopologyRealtimeTransport } from "./transport";
+import type { TopologyRealtimeTransport, Unsubscribe } from "./transport";
 import type { TopologyRuntimeStore } from "./runtimeStore";
 
 export type RealtimeControllerOptions = {
@@ -92,9 +92,9 @@ export class TopologyRealtimeController {
   /**
    * Releases the connection without calling it a failure.
    *
-   * `stop()` would do the same work, but it lands on `disconnected` -- the
-   * state that means something broke. Idle release is not a fault and must not
-   * read as one, so it has its own state and its own way back.
+   * `stop()` would do the same work, but it lands on `disconnected` — the state
+   * that means something broke. Idle release is not a fault and must not read
+   * as one, so it has its own state and its own way back.
    */
   suspend() {
     if (this.manuallyStopped) return;
@@ -128,7 +128,7 @@ export class TopologyRealtimeController {
    * reports only what its socket did can say neither, so both states were
    * unreachable from the interface even though the vocabulary named them.
    */
-  subscribeConnection(listener: (state: RealtimeConnectionState) => void): () => void {
+  subscribeConnection(listener: (state: RealtimeConnectionState) => void): Unsubscribe {
     this.connectionListeners.add(listener);
     return () => this.connectionListeners.delete(listener);
   }

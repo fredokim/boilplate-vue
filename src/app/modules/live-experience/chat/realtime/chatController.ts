@@ -1,5 +1,5 @@
 import type { ChatStore } from "./chatStore";
-import type { ChatConnectionState, ChatTransport } from "./types";
+import type { ChatConnectionState, ChatTransport, Unsubscribe } from "./types";
 
 export type ChatControllerOptions = {
   roomId: string;
@@ -85,9 +85,9 @@ export class ChatController {
   /**
    * Releases the connection without calling it a failure.
    *
-   * `stop()` would do the same work, but it lands on `disconnected` -- the
-   * state that means something broke. Idle release is not a fault and must not
-   * read as one, so it has its own state and its own way back.
+   * `stop()` would do the same work, but it lands on `disconnected` — the state
+   * that means something broke. Idle release is not a fault and must not read
+   * as one, so it has its own state and its own way back.
    */
   suspend() {
     if (this.manuallyStopped) return;
@@ -120,7 +120,7 @@ export class ChatController {
    * reports only what its socket did can say neither, so both states were
    * unreachable from the interface even though the vocabulary named them.
    */
-  subscribeConnection(listener: (state: ChatConnectionState) => void): () => void {
+  subscribeConnection(listener: (state: ChatConnectionState) => void): Unsubscribe {
     this.connectionListeners.add(listener);
     return () => this.connectionListeners.delete(listener);
   }
