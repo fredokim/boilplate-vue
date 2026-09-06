@@ -2,6 +2,7 @@ import { apiClient } from "@core/api";
 import { tokenStorage } from "@core/auth";
 import { TopologySnapshotDto } from "./topologySnapshot.dto";
 import type { TopologyRealtimeTransport, Unsubscribe } from "./transport";
+import { parseServerTopologyFrame } from "./serverTopologyFrame";
 import type { RealtimeConnectionState, TopologyRealtimeEvent, TopologyRuntimeSnapshot } from "./types";
 
 /**
@@ -27,14 +28,6 @@ export async function fetchTopologySnapshot(graphId: string): Promise<TopologyRu
     edges: response.edges as TopologyRuntimeSnapshot["edges"],
   };
 }
-
-type ServerMessage =
-  | { type: "ready"; connectionId: string }
-  | { type: "subscribed"; graphId: string; replayed: number }
-  | { type: "resync-required"; graphId: string; reason: string }
-  | { type: "event"; event: TopologyRealtimeEvent }
-  | { type: "heartbeat" | "pong"; at: number }
-  | { type: "error"; code: string; message: string };
 
 export type ServerTransportOptions = {
   getAccessToken: () => string | null;
@@ -111,34 +104,20 @@ export class ServerTopologyTransport implements TopologyRealtimeTransport {
   }
 
   private handleMessage(data: unknown): void {
-    const parsed = this.parse(data);
+    const frame = parseServerTopologyFrame(data);
 
-    if (!parsed) return;
-
-    if (parsed.type === "event") {
-      this.eventListeners.forEach((listener) => listener(parsed.event));
+    if (frame.kind === "event") {
+      this.eventListeners.forEach((listener) => listener(frame.event));
       return;
     }
 
-    if (parsed.type === "resync-required") {
-      this.options.onResyncRequired(parsed.reason);
+    if (frame.kind === "resync-required") {
+      this.options.onResyncRequired(frame.reason);
     }
-  }
 
-  /** A malformed frame is dropped rather than tearing down a working stream. */
-  private parse(data: unknown): ServerMessage | null {
-    if (typeof data !== "string") return null;
-
-    try {
-      const parsed: unknown = JSON.parse(data);
-
-      if (typeof parsed !== "object" || parsed === null) return null;
-      if (typeof (parsed as { type?: unknown }).type !== "string") return null;
-
-      return parsed as ServerMessage;
-    } catch {
-      return null;
-    }
+    // An `error` frame is deliberately not acted on here, as before. React sets
+    // its transport to `error` on one; this app leaves the connection alone. The
+    // difference is recorded rather than changed in a pass about validation.
   }
 
   private send(message: { event: string; data: unknown }): void {
