@@ -19,7 +19,7 @@ type CacheEntry = {
  * The React boilerplate gets these from TanStack Query. @tanstack/vue-query is the
  * direct equivalent and works on Vue 3, but npm installs its optional Vue 2 compat
  * peer anyway and then fails on that package's own peer range. See the server-state
- * caching decision in DEPENDENCY_STRATEGY.md for what this cache deliberately omits
+ * caching decision in docs/development/DEPENDENCY_STRATEGY.md for what this cache deliberately omits
  * and when to switch.
  */
 export class WidgetDataCache {

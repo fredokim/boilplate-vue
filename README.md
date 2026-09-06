@@ -94,24 +94,55 @@ Use component tests for UI behavior and DTO tests for API contract boundaries.
 - State management: Pinia remains the source for global app/session/module state.
 - Testing: Vitest, Storybook build, Playwright e2e, memory smoke, and API smoke scripts are available.
 
-## AI And API Guidance
+## Documentation
 
-- `DESIGN_RATIONALE.md`: problem definition, component design method, key decisions, results, and retrospective.
-- `AI_DEVELOPMENT_GUIDE.md`: implementation rules for AI agents and teammates.
-- `API_CONTRACT.md`: backend response envelope and typed error ownership.
-- `ARCHITECTURE.md`: module boundaries, UI/data rules, and reactivity rules.
-- `CONTRIBUTING.md`: checklist for new components, composables, and modules.
-- `VISUAL_GRAPH.md`: layer map, Vue Flow swap, realtime pipeline, and editing model for the graph module.
-- `REALTIME_INTEGRATION.md`: binding the streaming layer to Vue reactivity, and why shallowRef and onScopeDispose are required.
-- `DEPENDENCY_STRATEGY.md`: package replacement and dependency review rules.
-- `AI_WORKFLOW.md`: AI-assisted Vue workflow and verification gates.
-- `PROMPT_PLAYBOOK.md`: prompts for implementation, review, refactoring, and testing.
-- `CODE_REVIEW_CHECKLIST.md`: review checklist for AI-generated Vue code.
-- `AI_REFACTORING_CASE_STUDY.md`: Vue before/after refactoring playbook.
-- `PERFORMANCE_REPORT.md`: route, bundle, dependency, Web Vitals, and memory guardrails.
-- `I18N_STRATEGY.md`: typed dictionary, fallback locale, and formatting strategy.
-- `AI_CHANGELOG.md`: AI-assisted work log and verification notes.
-- MSW handlers live under `src/test/msw` for backend-free feature testing.
+Everything below is reachable from here, and `npm run check:docs` fails if a
+document stops being.
+
+**Architecture** — what the boundaries are and why
+
+- [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) — module boundaries, UI/data rules, and reactivity rules.
+- [DESIGN_RATIONALE.md](docs/architecture/DESIGN_RATIONALE.md) — problem definition, component design method, key decisions, and retrospective.
+- [REALTIME_INTEGRATION.md](docs/architecture/REALTIME_INTEGRATION.md) — binding the stream to Vue reactivity, and why `shallowRef` and `onScopeDispose` are required.
+- [VISUAL_GRAPH.md](docs/architecture/VISUAL_GRAPH.md) — layer map, Vue Flow swap, realtime pipeline, and editing model for the graph module.
+
+**API** — the contract with the backend
+
+- [API_CONTRACT.md](docs/api/API_CONTRACT.md) — backend response envelope and typed error ownership.
+- [`boilplate-server`](https://github.com/fredokim/boilplate-server) — the shared backend. Setup, request flow and envelope ownership live in its own README.
+
+**Development** — how to work in here
+
+- [CONTRIBUTING.md](docs/development/CONTRIBUTING.md) — checklist for new components, composables, and modules.
+- [FEATURE_CONTRACT.md](docs/development/FEATURE_CONTRACT.md) — what files a module is made of. `npm run check:generators` enforces it.
+- [CODE_REVIEW_CHECKLIST.md](docs/development/CODE_REVIEW_CHECKLIST.md) — review checklist for AI-generated Vue code.
+- [DEPENDENCY_STRATEGY.md](docs/development/DEPENDENCY_STRATEGY.md) — package replacement and dependency review rules.
+- [I18N_STRATEGY.md](docs/development/I18N_STRATEGY.md) — typed dictionary, fallback locale, and formatting.
+- [AI_WORKFLOW.md](docs/development/AI_WORKFLOW.md) — where AI is allowed to draft and where the developer decides.
+- [AI_DEVELOPMENT_GUIDE.md](docs/development/AI_DEVELOPMENT_GUIDE.md) — implementation rules for AI agents and teammates.
+- [PROMPT_PLAYBOOK.md](docs/development/PROMPT_PLAYBOOK.md) — prompts for implementation, review, refactoring, and testing.
+
+Three guides live beside the code they describe rather than in `docs/`, because
+that is where someone browsing the directory will find them:
+[atomic components](src/app/components/atomic/README.md),
+[Pinia stores](src/app/store/README.md),
+[analytics hooks](src/core/analytics/README.md), and
+[the generators](scripts/README.md).
+
+MSW handlers live under `src/test/msw` for backend-free feature testing.
+
+**Deployment**
+
+- [DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) — one origin, the proxy, and what the browser must never see.
+
+**History** — records of a past state, kept rather than maintained
+
+[`docs/history/`](docs/history) holds the AI changelog, the refactoring case
+study, the performance report, and the planning prompts. They describe the
+repository as it was, so `check:docs` does not hold them to today's layout.
+
+**Ecosystem** — [BOILPLATE](https://github.com/fredokim/BOILPLATE) introduces all
+four repositories and holds the decisions that span them.
 
 ## Performance Tooling
 
