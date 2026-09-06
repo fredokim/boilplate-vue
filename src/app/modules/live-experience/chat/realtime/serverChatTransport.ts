@@ -1,6 +1,7 @@
 import { apiClient } from "@core/api";
 import { tokenStorage } from "@core/auth";
 import { ChatHistoryDto } from "./serverChat.dto";
+import { parseServerChatFrame } from "./serverChatFrame";
 
 /**
  * Server-backed chat, alongside the mock transport rather than replacing it.
@@ -38,14 +39,6 @@ export function fetchChatHistory(broadcastId: string, afterSequence = 0, limit =
     ChatHistoryDto,
   );
 }
-
-type ServerMessage =
-  | { type: "ready"; connectionId: string }
-  | { type: "joined"; broadcastId: string; replayed: number; nextCursor: number | null; latestSequence: number }
-  | { type: "message"; message: ServerChatMessage }
-  | { type: "deleted"; messageId: string; sequence: number }
-  | { type: "heartbeat" | "pong"; at: number }
-  | { type: "error"; code: string; message: string };
 
 export type ServerChatTransportOptions = {
   getAccessToken: () => string | null;
@@ -106,35 +99,17 @@ export class ServerChatTransport {
   }
 
   private handleMessage(data: unknown): void {
-    const parsed = this.parse(data);
+    const frame = parseServerChatFrame(data);
 
-    if (!parsed) return;
-
-    if (parsed.type === "message") {
-      this.eventListeners.forEach((listener) => listener({ kind: "message", message: parsed.message }));
+    if (frame.kind === "message") {
+      this.eventListeners.forEach((listener) => listener({ kind: "message", message: frame.message }));
       return;
     }
 
-    if (parsed.type === "deleted") {
+    if (frame.kind === "deleted") {
       this.eventListeners.forEach((listener) =>
-        listener({ kind: "deleted", messageId: parsed.messageId, sequence: parsed.sequence }),
+        listener({ kind: "deleted", messageId: frame.messageId, sequence: frame.sequence }),
       );
-    }
-  }
-
-  /** A malformed frame is dropped rather than tearing down a working stream. */
-  private parse(data: unknown): ServerMessage | null {
-    if (typeof data !== "string") return null;
-
-    try {
-      const parsed: unknown = JSON.parse(data);
-
-      if (typeof parsed !== "object" || parsed === null) return null;
-      if (typeof (parsed as { type?: unknown }).type !== "string") return null;
-
-      return parsed as ServerMessage;
-    } catch {
-      return null;
     }
   }
 
